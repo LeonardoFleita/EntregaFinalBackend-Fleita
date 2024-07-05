@@ -1,0 +1,282 @@
+paths:
+  /api/carts/:
+    post:
+      summary: Crea un nuevo carrito. Debe ser un usuario autenticado
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: Carrito creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  payload:
+                    type: object
+                    $ref: "#components/schemas/Cart"
+        "500":
+          description: Error interno del servidor
+
+  /api/carts/{cId}:
+    get:
+      sumary: Trae el carrito buscado
+      tags:
+        - Carts
+      parameters:
+        - name: cId
+          in: path
+          description: id del carrito que se desea solicitar
+          schema:
+            type: String
+      responses:
+        "200":
+          description: Carrito obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  payload:
+                    type: object
+                    $ref: "#components/schemas/Cart"
+        "400":
+          description: Error en el request
+        "500":
+          description: Error interno del servidor
+    put:
+      summary: Actualiza el contenido del carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cId
+          in: path
+          description: id del carrito que se desea actualizar
+          schema:
+            type: String
+      responses:
+        "200":
+          description: Carrito actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  payload:
+                    type: object
+                    $ref: "#components/schemas/Cart"
+        "400":
+          description: Error en el request
+        "500":
+          description: Error interno del servidor
+    delete:
+      summary: Limpia el carrito seleccionado
+      tags:
+        - Carts
+      parameters:
+        - name: cId
+          in: path
+          description: id del carrito que se desea limpiar
+          schema:
+            type: String
+      responses:
+        "200":
+          description: Limpieza del carrito exitosa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  payload:
+                    type: object
+                    $ref: "#components/schemas/Cart"
+        "400":
+          description: Error en el request
+        "500":
+          description: Error interno del servidor
+  /api/carts/{cId}/products/{pId}:
+    post:
+      summary: Agrega un producto al carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cId
+          in: path
+          description: id del carrito que al que se desea agregar un producto
+          schema:
+            type: String
+        - name: pId
+          in: path
+          description: id del producto que se va a agregar al carrito
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto agregado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  payload:
+                    type: object
+                    $ref: "#components/schemas/ProductInCart"
+        "400":
+          description: Error en el request
+        "500":
+          description: Error interno del servidor
+    put:
+      summary: Actualiza las cantidades de un producto del carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cId
+          in: path
+          description: id del carrito que se desea actualizar
+          schema:
+            type: String
+        - name: pId
+          in: path
+          description: id del producto que se desea actualizar
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  updatedCart:
+                    type: object
+                    $ref: "#components/schemas/Cart"
+        "400":
+          description: Error en el request
+        "500":
+          description: Error interno del servidor
+    delete:
+      summary: Elimina un producto del carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cId
+          in: path
+          description: id del carrito que se desea actualizar
+          schema:
+            type: String
+        - name: pId
+          in: path
+          description: id del producto que se desea eliminar
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto eliminado exitosamente
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se eliminó el producto del carrito
+        "400":
+          description: Error en el request
+        "500":
+          description: Error interno del servidor
+  /api/carts/{cId}/purchase/:
+    post:
+      summary: Finaliza la compra
+      tags:
+        - Carts
+      parameters:
+        - name: cId
+          in: path
+          description: id del carrito que se desea comprar
+          schema:
+            type: String
+      responses:
+        "200":
+          description: Compra realizada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  updatedCart:
+                    type: object
+                    $ref: "#components/schemas/Ticket"
+
+        "400":
+          description: Error en el request
+        "500":
+          description: Error interno del servidor
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: objectId
+          description: id autogenerado por mongo
+        products:
+          type: array
+          description: Arreglo de productos dentro del carrito, por defecto está vacío
+          items:
+            $ref: "#/components/schemas/ProductInCart"
+      example:
+        _id: objectId(663d51fbf1f699a2474b0faf)
+        products: []
+    ProductInCart:
+      type: object
+      properties:
+        product:
+          type: string
+          description: id del producto agregado al carrito
+        quantity:
+          type: Number
+          description: Cantidad de unidades del producto que se agregaron al carrito
+      example:
+        product: 660b5c7f3125cc74d9d31737
+        quantity: 5
+    Ticket:
+      type: object
+      properties:
+        code:
+          type: string
+          description: id autogenerado
+        purchase_datetime:
+          type: string
+          format: date-time
+          description: Momento en que se genera la compra
+        amount:
+          type: Number
+          description: Precio total a pagar
+        purchaser:
+          type: string
+          description: email del usuario que realizó la compra
+      example:
+        code: 23
+        purchase_datetime: 2024-05-31T19:04:07.000+00:00
+        amount: 2500
+        purchaser: leo.fleita@gmail.com

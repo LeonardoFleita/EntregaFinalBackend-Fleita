@@ -1,0 +1,219 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtiene todos los productos
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Productos obtenidos exitosamente de la base de datos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#components/schemas/Product"
+        "500":
+          description: Error interno del servidor
+    post:
+      summary: Crea un nuevo producto. Debe estar logueado como admin o usuario premium
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Producto agregado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  payload:
+                    type: object
+                    $ref: "#components/schemas/Product"
+        "400":
+          description: Error al pasar los parámetros del producto que se quiere crear
+        "500":
+          description: Error interno del servidor
+  /api/products/{pId}:
+    get:
+      summary: Obtiene un solo producto a través de su id
+      tags:
+        - Products
+      parameters:
+        - name: pId
+          in: path
+          required: true
+          description: id del producto que se desea solicitar
+          schema:
+            type: String
+      responses:
+        "200":
+          description: Producto encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  payload:
+                    type: object
+                    $ref: "#components/schemas/Product"
+        "400":
+          description: Error de request
+        "500":
+          description: Error interno del servidor
+    put:
+      summary: Actualiza un producto existente. Debe estar logueado como admin o usuario premium
+      tags:
+        - Products
+      parameters:
+        - name: pId
+          in: path
+          required: true
+          description: id del producto que se desea actualizar
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/updateProduct"
+      responses:
+        "200":
+          description: Producto actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  Updated product:
+                    type: object
+                    $ref: "#components/schemas/Product"
+        "400":
+          description: Error de request
+        "500":
+          description: Error interno del servidor
+    delete:
+      summary: Elimina un producto existente. Debe estar logueado como admin o usuario premium
+      tags:
+        - Products
+      parameters:
+        - name: pId
+          in: path
+          required: true
+          description: id del producto que se desea actualizar
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto eliminado
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Product successfully deleted
+        "400":
+          description: Error de request
+        "500":
+          description: Error interno del servidor
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado por mongo
+        title:
+          type: String
+          description: Nombre del producto
+        description:
+          type: String
+          description: Descripción del producto
+        price:
+          type: Number
+          description: Precio del producto
+        thumbnail:
+          type: Array
+          description: Arreglo de urls que poseen imagen del producto
+        code:
+          type: String
+          description: Código del producto
+        stock:
+          type: Number
+          description: Cantidad de unidades del producto
+        category:
+          type: String
+          description: Categoría del producto
+        status:
+          type: Boolean
+          description: Status del producto
+        owner:
+          type: String
+          description: Email del dueño del producto, o admin en caso de no tener dueño
+      example:
+        _id: ObjectId(660b5c7f3125cc74d9d31737)
+        title: Leche
+        description: Leche en sachet 1ltr
+        price: 1000
+        thumbnail:
+          [
+            "https://acdn.mitiendanube.com/stores/093/780/products/serenisima-clasica-751-95fea92d1a27f8e9ab15710914346750-1024-1024.webp",
+          ]
+        code: abc123
+        stock: 8
+        category: Lácteos
+        status: true
+        owner: admin
+  requestBodies:
+    updateProduct:
+      type: object
+      properties:
+        title:
+          type: String
+          description: Nombre del producto
+        description:
+          type: String
+          description: Descripción del producto
+        price:
+          type: Number
+          description: Precio del producto
+        thumbnail:
+          type: Array
+          description: Arreglo de urls que poseen imagen del producto
+        code:
+          type: String
+          description: Código del producto
+        stock:
+          type: Number
+          description: Cantidad de unidades del producto
+        category:
+          type: String
+          description: Categoría del producto
+      example:
+        title: Leche
+        description: Leche en sachet 1ltr
+        price: 1000
+        thumbnail:
+          [
+            "https://acdn.mitiendanube.com/stores/093/780/products/serenisima-clasica-751-95fea92d1a27f8e9ab15710914346750-1024-1024.webp",
+          ]
+        code: abc123
+        stock: 8
+        category: Lácteos
