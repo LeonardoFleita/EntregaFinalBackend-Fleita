@@ -24,7 +24,7 @@ class CartController {
   getCarts = async (req, res) => {
     try {
       const carts = await this.service.getCarts();
-      res.status(200).send({ carts });
+      res.status(200).send({ status: "Success", payload: carts });
     } catch (err) {
       return this.#handleError(res, err);
     }
@@ -47,7 +47,7 @@ class CartController {
     try {
       const cartId = req.params.cId;
       const cart = await this.service.getCartById(cartId);
-      res.status(200).json({ status: "Success", payload: cart[0] });
+      res.status(200).json({ status: "Success", payload: cart });
     } catch (err) {
       return this.#handleError(res, err);
     }

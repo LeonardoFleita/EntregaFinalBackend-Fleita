@@ -132,7 +132,7 @@ class CartService {
         throw new Error("invalid parameters");
       }
       const cart = await this.manager.getCartByIdPopulate(cartId);
-      const products = cart[0].products;
+      const products = cart.products;
 
       const productsInStock = products.filter(
         (p) => p.quantity <= p.product.stock

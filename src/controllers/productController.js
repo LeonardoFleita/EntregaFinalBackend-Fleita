@@ -105,7 +105,7 @@ class ProductController {
     try {
       const pId = req.params.pId;
       const product = await this.service.getProductById(pId);
-      res.status(200).json({ status: "success", payload: product[0] });
+      res.status(200).json({ status: "success", payload: product });
     } catch (err) {
       return this.#handleError(req, err);
     }
@@ -151,9 +151,7 @@ class ProductController {
       const user = req.session.user;
       await this.service.updateProduct({ ...newData, id: pId }, user);
       const updatedProduct = await this.service.getProductById(pId);
-      res
-        .status(200)
-        .send({ status: "Success", "Updated product": updatedProduct });
+      res.status(200).send({ status: "Success", payload: updatedProduct });
     } catch (err) {
       return this.#handleError(req, err);
     }

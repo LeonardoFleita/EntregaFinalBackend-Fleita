@@ -74,7 +74,7 @@ class ProductService {
           throw new Error("invalid parameters");
         }
         const wantedProduct = await this.manager.getProductById(product.id);
-        if (user.role === "user" && user.email !== wantedProduct[0].owner) {
+        if (user.role === "user" && user.email !== wantedProduct.owner) {
           throw new Error("Not authorized");
         }
       } catch (err) {
@@ -95,7 +95,7 @@ class ProductService {
           throw new Error("invalid parameters");
         }
         const wantedProduct = await this.manager.getProductById(prodId);
-        if (user.role === "user" && user.email !== wantedProduct[0].owner) {
+        if (user.role === "user" && user.email !== wantedProduct.owner) {
           throw new Error("Not authorized");
         }
       } catch (err) {

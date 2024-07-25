@@ -29,8 +29,8 @@ class CartManager {
 
   getCartById = async (cartId) => {
     try {
-      const findedCart = await CartModel.find({ _id: cartId });
-      if (findedCart.length < 1) {
+      const findedCart = await CartModel.findOne({ _id: cartId });
+      if (!findedCart) {
         throw new Error(`not found`);
       }
       return findedCart;
@@ -43,10 +43,10 @@ class CartManager {
 
   getCartByIdPopulate = async (cartId) => {
     try {
-      const findedCart = await CartModel.find({ _id: cartId })
+      const findedCart = await CartModel.findOne({ _id: cartId })
         .populate("products.product")
         .lean();
-      if (findedCart.length < 1) {
+      if (!findedCart) {
         throw new Error(`not found`);
       }
       return findedCart;
@@ -61,11 +61,11 @@ class CartManager {
     try {
       try {
         await this.getCartById(cartId);
-        let findedProduct = await ProductModel.find({ _id: productId });
-        if (findedProduct.length < 1) {
+        let findedProduct = await ProductModel.findOne({ _id: productId });
+        if (!findedProduct) {
           throw new Error("not found");
         }
-        if (findedProduct[0].owner === user.email) {
+        if (findedProduct.owner === user.email) {
           throw new Error("not authorized");
         }
       } catch (err) {
@@ -119,7 +119,7 @@ class CartManager {
       if (!findedCart) {
         throw Error();
       }
-      let products = findedCart[0].products;
+      let products = findedCart.products;
       let findedProduct = products.find(
         (p) => p.product.toString() === productId
       );
@@ -158,7 +158,7 @@ class CartManager {
       if (!findedCart) {
         throw Error();
       }
-      let products = findedCart[0].products;
+      let products = findedCart.products;
       let findedProduct = products.find(
         (p) => p.product.toString() === productId
       );
