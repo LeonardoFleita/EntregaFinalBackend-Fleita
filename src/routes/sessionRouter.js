@@ -8,7 +8,8 @@ const router = Router();
 
 const withSessionController = (callback) => {
   return (req, res) => {
-    const controller = new SessionController();
+    const service = new UserService(req.app.get("userManager"));
+    const controller = new SessionController(service);
     return callback(controller, req, res);
   };
 };

@@ -1,0 +1,30 @@
+<article>
+  <h2>Formulario</h2>
+  <div class="formContainer">
+
+    <form
+      action="/api/users/{{uId}}/documents"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <legend>Agregar documentos</legend>
+      <label for="type">Tipo de documento:</label>
+      <select id="type" name="type" onchange="toggleNameField()">
+        <option value="profile">Imagen de perfil</option>
+        <option value="identification">Identificación</option>
+        <option value="adress">Comprobante de domicilio</option>
+        <option value="account">Comprobante de estado de cuenta</option>
+        <option value="product">Imagen de producto</option>
+        <option value="other">Otro documento</option>
+      </select>
+      <div id="nameContainer">
+        <label for="name">Nombre</label>
+        <input type="text" id="name" name="name" />
+      </div>
+      <label for="document">Documento</label>
+      <input type="file" id="document" name="document" />
+      <button type="submit">Enviar</button>
+    </form>
+
+  </div>
+</article>

@@ -3,6 +3,7 @@ const {
   isNotLoggedIn,
   isLoggedIn,
   productPermission,
+  isUser,
 } = require("../middlewares/auth.middleware");
 const { generateProduct } = require("../mocks/generateProducts");
 
@@ -71,6 +72,7 @@ router.get(`/`, async (req, res) => {
     avaiability
   );
   const { user, loggedIn } = await userSession(req);
+  const uId = user ? user._id : false;
 
   const isAdmin = user?.role === "admin" ? true : false;
   const userCart = user ? user.cart?.toString() : null;
@@ -86,6 +88,7 @@ router.get(`/`, async (req, res) => {
     loggedIn,
     user,
     userCart,
+    uId,
   });
 });
 
@@ -93,6 +96,7 @@ router.get(`/`, async (req, res) => {
 
 router.get("/addProducts", isLoggedIn, productPermission, async (req, res) => {
   const { user, loggedIn } = await userSession(req);
+  const uId = user ? user._id : false;
   res.render(`addProducts`, {
     title: "Formulario",
     scripts: ["index.js"],
@@ -101,6 +105,7 @@ router.get("/addProducts", isLoggedIn, productPermission, async (req, res) => {
     login: true,
     loggedIn,
     user,
+    uId,
   });
 });
 
@@ -110,10 +115,11 @@ router.get("/carts/:cId", isLoggedIn, async (req, res) => {
   const cartManager = req.app.get("cartManager");
   const cId = req.params.cId;
   const cart = await cartManager.getCartByIdPopulate(cId);
-  const products = cart[0].products.map((p) => {
+  const products = cart.products.map((p) => {
     return { ...p, totalPrice: p.product.price * p.quantity };
   });
   const { user, loggedIn } = await userSession(req);
+  const uId = user ? user._id : false;
   res.render("cart", {
     title: "Carrito",
     products: products,
@@ -122,6 +128,7 @@ router.get("/carts/:cId", isLoggedIn, async (req, res) => {
     login: true,
     user,
     loggedIn,
+    uId,
   });
 });
 
@@ -168,6 +175,23 @@ router.get("/restorePassword/:token", isNotLoggedIn, (req, res) => {
     token: token,
     endPoint: "Restaurar contraseña",
     login: false,
+  });
+});
+
+//Formulario para que el usuario pueda cargar documentos
+
+router.get("/users/:uId/documents", isLoggedIn, isUser, async (req, res) => {
+  const { user, loggedIn } = await userSession(req);
+  const uId = user ? user._id : false;
+  res.render(`uploader`, {
+    title: "Formulario",
+    scripts: ["index.js", "documentForm.js"],
+    css: ["styles.css"],
+    endPoint: "Agregar documentos",
+    login: true,
+    loggedIn,
+    user,
+    uId,
   });
 });
 

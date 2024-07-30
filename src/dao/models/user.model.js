@@ -12,6 +12,21 @@ const schema = new mongoose.Schema({
   },
   role: { type: String, default: "user" },
   premium: { type: Boolean, default: false },
+  documents: [
+    {
+      name: String,
+      reference: String,
+    },
+  ],
+  documentStatus: {
+    type: {},
+    default: {
+      identification: false,
+      adressCertification: false,
+      accountCertification: false,
+    },
+  },
+  lastConnection: Date,
 });
 
 module.exports = mongoose.model("User", schema, "users");

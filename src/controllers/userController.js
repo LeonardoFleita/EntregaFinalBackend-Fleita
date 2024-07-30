@@ -42,9 +42,22 @@ class UserController {
   setPremiumUser = async (req, res) => {
     try {
       const userId = req.params.uId;
-      const user = await this.service.getUserById(userId);
-      const newUserData = { ...user, premium: !user.premium };
-      await this.service.updateUser(newUserData);
+      let user = await this.service.getUserById(userId);
+      const docStatus = user.documentStatus;
+      if (!user.premium) {
+        if (
+          docStatus.identification &&
+          docStatus.adressCertification &&
+          docStatus.accountCertification
+        ) {
+          user.premium = true;
+        } else {
+          return res.status(400).json({ error: "falta documentación" });
+        }
+      } else {
+        user.premium = false;
+      }
+      await this.service.updateUser(user);
       let updatedUser = await this.service.getUserById(userId);
       updatedUser = new CurrentUserDto(updatedUser);
       res.status(200).json({ updatedUser });
@@ -120,6 +133,48 @@ class UserController {
         return res.redirect("/forgotPassword");
       }
       res.status(404).json({ error: err.message });
+    }
+  };
+
+  uploadDocument = async (req, res) => {
+    try {
+      const type = req.body.type;
+      let name;
+      if (req.body.name) {
+        name = req.body.name;
+      } else {
+        switch (type) {
+          case "profile":
+            name = "profilePicture";
+            break;
+          case "identification":
+            name = "identification";
+            break;
+          case "adress":
+            name = "adressCertification";
+            break;
+          case "account":
+            name = "accountCertification";
+            break;
+        }
+      }
+      const reference = req.file.path;
+      const userId = req.params.uId;
+      let user = await this.service.getUserById(userId);
+      let updatedDocs = user.documents.map((doc) =>
+        doc.name === name ? { name, reference } : doc
+      );
+      if (!updatedDocs.some((doc) => doc.name === name)) {
+        updatedDocs.push({ name, reference });
+      }
+      user.documents = updatedDocs;
+      if (user.documentStatus.hasOwnProperty(name)) {
+        user.documentStatus[name] = true;
+      }
+      await this.service.updateUser(user);
+      res.status(200).json({ status: "success", payload: "Archivo cargado" });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
     }
   };
 }

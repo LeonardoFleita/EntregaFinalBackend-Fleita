@@ -1,5 +1,14 @@
+const moment = require("moment-timezone");
+
 class SessionController {
-  constructor() {}
+  constructor(userService) {
+    this.service = userService;
+  }
+
+  date = () => {
+    const dateAndHour = moment().tz("America/Argentina/Buenos_Aires").format();
+    return dateAndHour;
+  };
 
   //Métodos para la api
 
@@ -16,12 +25,20 @@ class SessionController {
       premium: user.premium,
       cart: user.cart ? user.cart._id : null,
     };
+    let loginDate = this.date();
+    const updatedUser = { ...user, lastConnection: loginDate };
+    await this.service.updateUser(updatedUser);
     const userSession = req.session.user;
     res.send({ status: "successful login", userSession });
   };
 
   logout = async (req, res) => {
     try {
+      const userId = req.session.user.id;
+      const user = await this.service.getUserById(userId);
+      let loginDate = this.date();
+      const updatedUser = { ...user, lastConnection: loginDate };
+      await this.service.updateUser(updatedUser);
       req.session.destroy((err) => {
         if (err) {
           throw Error(err);
@@ -48,11 +65,19 @@ class SessionController {
       premium: user.premium,
       cart: user.cart ? user.cart._id : null,
     };
+    let loginDate = this.date();
+    const updatedUser = { ...user, lastConnection: loginDate };
+    await this.service.updateUser(updatedUser);
     res.redirect("/");
   };
 
   logoutView = async (req, res) => {
     try {
+      const userId = req.session.user.id;
+      const user = await this.service.getUserById(userId);
+      let loginDate = this.date();
+      const updatedUser = { ...user, lastConnection: loginDate };
+      await this.service.updateUser(updatedUser);
       req.session.destroy((err) => {
         if (err) {
           throw Error(err);

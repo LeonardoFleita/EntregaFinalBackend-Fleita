@@ -21,6 +21,9 @@
             {{#if isAdmin}}
               <a href="/addProducts">Agregar productos</a>
             {{/if}}
+            {{#if user}}
+              <a href="/users/{{uId}}/documents">Cargar archivos</a>
+            {{/if}}
             <a href="/api/sessions/logoutView">Logout</a>
           {{else}}
             <a href="/login">Iniciar sesión</a>
