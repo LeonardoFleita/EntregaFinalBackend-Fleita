@@ -1,0 +1,16 @@
+<article>
+  <h2>Gestionar Usuarios</h2>
+  <div class="formContainer">
+    <div style="color: black;">
+      <p>Nombre: {{user.firstName}}</p>
+      <p>Apellido: {{user.lastName}}</p>
+      <p>Email: {{user.email}}</p>
+      <p>Premium: {{user.premium}}</p>
+      <p>Id: <span id="userId">{{user.id}}</span></p>
+      <p>Última conexión: {{user.lastConnection}}</p>
+    </div>
+    <button id="switchRole">{{#if user.premium}}Remover suscripción premium{{else}}Suscripción
+        premium{{/if}}</button>
+    <button id="deleteUser">Eliminar usuario</button>
+  </div>
+</article>

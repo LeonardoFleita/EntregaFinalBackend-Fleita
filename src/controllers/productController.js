@@ -151,7 +151,7 @@ class ProductController {
       const user = req.session.user;
       await this.service.updateProduct({ ...newData, id: pId }, user);
       const updatedProduct = await this.service.getProductById(pId);
-      res.status(200).send({ status: "Success", payload: updatedProduct });
+      res.status(200).send({ status: "success", payload: updatedProduct });
     } catch (err) {
       return this.#handleError(req, err);
     }
@@ -164,7 +164,9 @@ class ProductController {
       const pId = req.params.pId;
       const user = req.session.user;
       await this.service.deleteProduct(pId, user);
-      res.status(200).send("Product successfully deleted");
+      res
+        .status(200)
+        .send({ status: "success", message: "product succesfully deleted" });
     } catch (err) {
       return this.#handleError(req, err);
     }

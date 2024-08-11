@@ -71,7 +71,7 @@ class CartController {
         prodId,
         user
       );
-      res.status(200).send({ status: "Success", payload: addedProduct });
+      res.status(200).json({ status: "success", payload: addedProduct });
     } catch (err) {
       return this.#handleError(res, err);
     }
@@ -106,7 +106,10 @@ class CartController {
       await this.service.deleteProductFromCart(cartId, prodId);
       res
         .status(200)
-        .send(`Se eliminó el producto con id${prodId} del carrito`);
+        .json({
+          status: "success",
+          message: `Se eliminó el producto con id${prodId} del carrito`,
+        });
     } catch (err) {
       return this.#handleError(res, err);
     }

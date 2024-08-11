@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const handlebars = require("express-handlebars");
 const mongoose = require("mongoose");
@@ -19,7 +20,6 @@ const { errorHandler } = require("./errors/errorHandler");
 const { useLogger } = require("./utils/logger");
 const swaggerJSDoc = require("swagger-jsdoc");
 const { serve, setup } = require("swagger-ui-express");
-require("dotenv").config();
 
 const app = express();
 

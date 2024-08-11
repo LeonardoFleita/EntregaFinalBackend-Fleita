@@ -12,25 +12,23 @@
       style="text-align: center; background-color: darkolivegreen; color: white"
     >
       <h1>{{endPoint}}</h1>
-      {{#if login}}
-        <div class="navbarLogin">
-          {{#if loggedIn}}
-            <p>Bienvenido/a {{user.firstName}} {{user.lastName}}</p>
-            <p>email: {{user.email}}</p>
-            <p>Rol: {{user.role}}</p>
-            {{#if isAdmin}}
-              <a href="/addProducts">Agregar productos</a>
-            {{/if}}
-            {{#if user}}
-              <a href="/users/{{uId}}/documents">Cargar archivos</a>
-            {{/if}}
-            <a href="/api/sessions/logoutView">Logout</a>
-          {{else}}
-            <a href="/login">Iniciar sesión</a>
-            <a href="/register">Registrarse</a>
+      <div class="navbarLogin">
+        {{#if loggedIn}}
+          <p>Bienvenido/a {{user.firstName}} {{user.lastName}}</p>
+          <p>email: {{user.email}}</p>
+          <p>Rol: {{user.role}}</p>
+          {{#if isAdmin}}
+            <a href="/addProducts">Agregar productos</a>
           {{/if}}
-        </div>
-      {{/if}}
+          {{#if user}}
+            <a href="/users/{{uId}}/documents">Cargar archivos</a>
+          {{/if}}
+          <a href="/api/sessions/logoutView">Logout</a>
+        {{else}}
+          <a href="/login">Iniciar sesión</a>
+          <a href="/register">Registrarse</a>
+        {{/if}}
+      </div>
     </header>
     <main>
 
@@ -40,7 +38,6 @@
     {{#if useSweetAlert}}
       <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{/if}}
-
     {{#each scripts}}
       <script src="/js/{{this}}"></script>
     {{/each}}

@@ -10,14 +10,28 @@ function addToCart(product, cart) {
     },
     credentials: "include",
   })
+    .then((res) => res.json())
     .then((res) => {
-      if (!res.ok) {
-        return res.json().then((error) => {
-          throw new Error(JSON.stringify(error));
+      if (res.status === "success") {
+        Swal.fire({
+          title: "Producto agregado al carrito",
+          icon: "success",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: "Ver carrito",
+          cancelButtonText: "Seguir comprando",
+        }).then((res) => {
+          if (res.isConfirmed) {
+            window.location.href = `/carts/${cartId}`;
+          }
         });
+      } else {
+        Swal.fire({
+          title: res.error,
+          icon: "error",
+        });
+        throw new Error(res.error);
       }
-      res.json();
     })
-    .then((res) => (window.location.href = `/carts/${cartId}`))
-    .catch((err) => console.log("Error en la solicitud:", err.message));
+    .catch((err) => console.error(err));
 }

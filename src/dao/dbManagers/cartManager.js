@@ -175,6 +175,35 @@ class CartManager {
       throw Error(err.message);
     }
   };
+
+  //Elimina carritos
+
+  deleteCarts = async (carts) => {
+    try {
+      try {
+        const wantedCarts = await CartModel.find({ _id: { $in: carts } });
+        if (wantedCarts.length < carts.length) {
+          throw Error();
+        }
+      } catch (err) {
+        throw new Error("not found");
+      }
+      await CartModel.deleteMany({ _id: { $in: carts } });
+    } catch (err) {
+      throw Error(err.message);
+    }
+  };
+
+  //Eliminar un carrito
+
+  deleteCartById = async (cartId) => {
+    try {
+      await this.getCartById(cartId);
+      await CartModel.deleteOne({ _id: cartId });
+    } catch (err) {
+      throw Error(err.message);
+    }
+  };
 }
 
 module.exports = CartManager;

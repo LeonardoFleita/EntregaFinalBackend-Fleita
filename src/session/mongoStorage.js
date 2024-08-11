@@ -1,11 +1,10 @@
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-require("dotenv").config();
 
 const storage = MongoStore.create({
   dbName: process.env.DB_NAME,
   mongoUrl: process.env.MONGO_URL,
-  ttl: 180,
+  ttl: 300,
 });
 
 module.exports = session({

@@ -4,6 +4,18 @@ const UserModel = require("../models/user.model");
 class UserManager {
   constructor() {}
 
+  //Traer todos los usuarios
+
+  getUsers = async () => {
+    try {
+      let users = await UserModel.find();
+      users = users.map((u) => u.toObject());
+      return users;
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  };
+
   //Crea un nuevo usuario
 
   registerUser = async (
@@ -41,7 +53,7 @@ class UserManager {
       }
       return user;
     } catch (err) {
-      throw Error(err.message);
+      throw Error("not found");
     }
   };
 
@@ -61,6 +73,34 @@ class UserManager {
   updateUser = async (user) => {
     try {
       await UserModel.updateOne({ _id: user._id }, { $set: { ...user } });
+    } catch (err) {
+      throw Error(err.message);
+    }
+  };
+
+  //Eliminar usuarios
+
+  deleteUsers = async (users) => {
+    try {
+      try {
+        const wantedUsers = await UserModel.find({ _id: { $in: users } });
+        if (wantedUsers.length < users.length) {
+          throw Error();
+        }
+      } catch (err) {
+        throw new Error("not found");
+      }
+      await UserModel.deleteMany({ _id: { $in: users } });
+    } catch (err) {
+      throw Error(err.message);
+    }
+  };
+
+  //Eliminar un usuario
+  deleteUserById = async (userId) => {
+    try {
+      await this.getUserById(userId);
+      await UserModel.deleteOne({ _id: userId });
     } catch (err) {
       throw Error(err.message);
     }

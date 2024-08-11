@@ -11,8 +11,8 @@ module.exports = {
   },
   isLoggedIn: (req, res, next) => {
     const user = req.session.user;
-    req.logger.info("You must log in");
     if (!user) {
+      req.logger.info("You must log in");
       return res.status(401).json({
         error: "not authenticated",
       });
@@ -21,16 +21,16 @@ module.exports = {
   },
   isAdmin: (req, res, next) => {
     const user = req.session.user;
-    req.logger.warning("You must be admin");
     if (user.role !== "admin") {
+      req.logger.warning("You must be admin");
       return res.status(403).json({ error: "not authorized" });
     }
     next();
   },
   isUser: (req, res, next) => {
     const user = req.session.user;
-    req.logger.warning("You must be user");
     if (user.role !== "user") {
+      req.logger.warning("You must be user");
       return res.status(403).json({ error: "not authorized" });
     }
     next();

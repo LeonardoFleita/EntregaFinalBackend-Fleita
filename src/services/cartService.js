@@ -133,7 +133,6 @@ class CartService {
       }
       const cart = await this.manager.getCartByIdPopulate(cartId);
       const products = cart.products;
-
       const productsInStock = products.filter(
         (p) => p.quantity <= p.product.stock
       );
@@ -157,8 +156,7 @@ class CartService {
       const amount = totalPrice(productsInStock);
 
       const date = () => {
-        const dateAndHour = moment().tz("America/Argentina").format();
-        return dateAndHour;
+        return moment().tz("America/Argentina/Buenos_Aires").format();
       };
       let purchase_datetime = date();
 

@@ -2,11 +2,34 @@ const { CurrentUserDto } = require("../dto/currentUser.dto");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const { hashPassword, isValidPassword } = require("../utils/hashing");
+const moment = require("moment-timezone");
+const { transport } = require("../utils/transportMailing");
 
 class UserController {
   constructor(userService) {
     this.service = userService;
   }
+
+  getUsers = async (req, res) => {
+    try {
+      let users = await this.service.getUsers();
+      users = users.map((u) => (u = new CurrentUserDto(u)));
+      res.status(200).json({ status: "success", payload: users });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  };
+
+  getUserById = async (req, res) => {
+    try {
+      const uId = req.params.uId;
+      let user = await this.service.getUserById(uId);
+      user = new CurrentUserDto(user);
+      res.status(200).json({ status: "success", payload: user });
+    } catch (err) {
+      res.status(404).json({ error: err.message });
+    }
+  };
 
   getSessionUser = async (req, res) => {
     try {
@@ -60,7 +83,7 @@ class UserController {
       await this.service.updateUser(user);
       let updatedUser = await this.service.getUserById(userId);
       updatedUser = new CurrentUserDto(updatedUser);
-      res.status(200).json({ updatedUser });
+      res.status(200).json({ status: "success", updatedUser });
     } catch (err) {
       res.status(403).json({ error: err.message });
     }
@@ -78,15 +101,6 @@ class UserController {
       });
 
       const restoreLink = `http://localhost:8080/restorePassword/${token}`;
-
-      const transport = nodemailer.createTransport({
-        service: "gmail",
-        port: 587,
-        auth: {
-          user: process.env.GMAIL_ACCOUNT,
-          pass: process.env.GMAIL_PASSWORD,
-        },
-      });
 
       await transport.sendMail({
         from: process.env.GMAIL_ACCOUNT,
@@ -175,6 +189,54 @@ class UserController {
       res.status(200).json({ status: "success", payload: "Archivo cargado" });
     } catch (err) {
       res.status(400).json({ error: err.message });
+    }
+  };
+
+  deleteUsers = async (req, res) => {
+    try {
+      const cartManager = req.app.get("cartManager");
+      const users = await this.service.getUsers();
+      const expiredUsers = users.filter(
+        (u) => moment().diff(u.lastConnection, "days") > 2
+      );
+      let expiredUsersIds = expiredUsers.map((u) => u._id.toString());
+      let expiredUsersEmails = expiredUsers.map((u) => u.email);
+      let expiredCartsIds = expiredUsers.map((u) => u.cart.toString());
+      expiredUsers.map(
+        async (u) =>
+          await transport.sendMail({
+            from: process.env.GMAIL_ACCOUNT,
+            to: u.email,
+            subject: "Cuenta eliminada",
+            text: `Hola ${u.firstName}, le informamos que su cuenta ha sido eliminada de nuestra base de datos por inactividad`,
+          })
+      );
+
+      await cartManager.deleteCarts(expiredCartsIds);
+      await this.service.deleteUsers(expiredUsersIds);
+      res.status(200).send({
+        status: "success",
+        message: `Han sido eliminadas las cuentas pertenecientes a las siguientes direcciones de correo electrónico: ${expiredUsersEmails.join(
+          ", "
+        )}`,
+      });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  };
+
+  deleteUserById = async (req, res) => {
+    try {
+      const uId = req.params.uId;
+      const user = await this.service.getUserById(uId);
+      const cartManager = req.app.get("cartManager");
+      await this.service.deleteUserById(uId);
+      await cartManager.deleteCartById(user.cart);
+      res
+        .status(200)
+        .json({ status: "success", message: "user succesfully deleted" });
+    } catch (err) {
+      res.status(404).json({ error: err.message });
     }
   };
 }

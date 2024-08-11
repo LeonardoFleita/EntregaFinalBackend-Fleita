@@ -4,8 +4,10 @@ const {
   isLoggedIn,
   productPermission,
   isUser,
+  isAdmin,
 } = require("../middlewares/auth.middleware");
 const { generateProduct } = require("../mocks/generateProducts");
+const { CurrentUserDto } = require("../dto/currentUser.dto");
 
 const router = Router();
 
@@ -49,7 +51,6 @@ router.get(`/mockingproducts`, async (req, res) => {
     scripts: ["index.js"],
     css: ["styles.css"],
     endPoint: "Home",
-    login: true,
     loggedIn,
     user,
   });
@@ -83,12 +84,12 @@ router.get(`/`, async (req, res) => {
     scripts: ["index.js"],
     css: ["styles.css"],
     endPoint: "Home",
-    login: true,
     isAdmin,
     loggedIn,
     user,
     userCart,
     uId,
+    useSweetAlert: true,
   });
 });
 
@@ -102,7 +103,6 @@ router.get("/addProducts", isLoggedIn, productPermission, async (req, res) => {
     scripts: ["index.js"],
     css: ["styles.css"],
     endPoint: "Agregar productos",
-    login: true,
     loggedIn,
     user,
     uId,
@@ -123,12 +123,14 @@ router.get("/carts/:cId", isLoggedIn, async (req, res) => {
   res.render("cart", {
     title: "Carrito",
     products: products,
+    scripts: ["index.js", "cart.js"],
     css: ["styles.css"],
     endPoint: "Cart",
-    login: true,
     user,
+    cId,
     loggedIn,
     uId,
+    useSweetAlert: true,
   });
 });
 
@@ -139,7 +141,6 @@ router.get("/login", isNotLoggedIn, (req, res) => {
     title: "Login",
     css: ["styles.css"],
     endPoint: "Login",
-    login: false,
   });
 });
 
@@ -148,9 +149,9 @@ router.get("/login", isNotLoggedIn, (req, res) => {
 router.get("/register", isNotLoggedIn, (req, res) => {
   res.render("register", {
     title: "Registro",
+    scripts: ["registerForm.js"],
     css: ["styles.css"],
     endPoint: "Registro",
-    login: false,
   });
 });
 
@@ -161,7 +162,6 @@ router.get("/forgotPassword", isNotLoggedIn, (req, res) => {
     title: "Envío de email",
     css: ["styles.css"],
     endPoint: "Envío de email",
-    login: false,
   });
 });
 
@@ -174,7 +174,6 @@ router.get("/restorePassword/:token", isNotLoggedIn, (req, res) => {
     css: ["styles.css"],
     token: token,
     endPoint: "Restaurar contraseña",
-    login: false,
   });
 });
 
@@ -188,11 +187,30 @@ router.get("/users/:uId/documents", isLoggedIn, isUser, async (req, res) => {
     scripts: ["index.js", "documentForm.js"],
     css: ["styles.css"],
     endPoint: "Agregar documentos",
-    login: true,
     loggedIn,
     user,
     uId,
   });
 });
+
+//Ver y modificar rol de un usuario
+
+router.get(
+  "/manageUsers/:uId",
+  /*isLoggedIn, isAdmin,*/ async (req, res) => {
+    const uId = req.params.uId;
+    const userManager = req.app.get("userManager");
+    let user = await userManager.getUserById(uId);
+    user = new CurrentUserDto(user);
+    res.render(`manageUsers`, {
+      title: "Gestión de usuarios",
+      scripts: ["index.js", "manageUsers.js"],
+      user,
+      useSweetAlert: true,
+      css: ["styles.css"],
+      endPoint: "Gestionar usuarios",
+    });
+  }
+);
 
 module.exports = router;

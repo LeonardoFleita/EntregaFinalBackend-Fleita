@@ -1,7 +1,11 @@
 const { Router } = require("express");
 const { UserController } = require("../controllers/userController");
 const { UserService } = require("../services/userService");
-const { isUser, isLoggedIn } = require("../middlewares/auth.middleware");
+const {
+  isUser,
+  isLoggedIn,
+  isAdmin,
+} = require("../middlewares/auth.middleware");
 const { uploader } = require("../utils/uploader");
 
 const router = Router();
@@ -14,10 +18,20 @@ const withController = (callback) => {
   };
 };
 
+router.get(
+  "/",
+  withController((controller, req, res) => controller.getUsers(req, res))
+);
+
+router.get(
+  "/:uId",
+  withController((controller, req, res) => controller.getUserById(req, res))
+);
+
 router.post(
   "/premium/:uId",
   isLoggedIn,
-  isUser,
+  isAdmin,
   withController((controller, req, res) => controller.setPremiumUser(req, res))
 );
 
@@ -27,6 +41,20 @@ router.post(
   isUser,
   uploader.single("document"),
   withController((controller, req, res) => controller.uploadDocument(req, res))
+);
+
+router.delete(
+  "/",
+  isLoggedIn,
+  isAdmin,
+  withController((controller, req, res) => controller.deleteUsers(req, res))
+);
+
+router.delete(
+  "/:uId",
+  isLoggedIn,
+  isAdmin,
+  withController((controller, req, res) => controller.deleteUserById(req, res))
 );
 
 module.exports = router;

@@ -1,3 +1,5 @@
+const { transport } = require("../utils/transportMailing");
+
 class ProductService {
   constructor(productManager) {
     this.manager = productManager;
@@ -69,16 +71,12 @@ class ProductService {
 
   updateProduct = async (product, user) => {
     try {
-      try {
-        if (product.id === ":pId") {
-          throw new Error("invalid parameters");
-        }
-        const wantedProduct = await this.manager.getProductById(product.id);
-        if (user.role === "user" && user.email !== wantedProduct.owner) {
-          throw new Error("Not authorized");
-        }
-      } catch (err) {
-        throw Error(err.message);
+      if (product.id === ":pId") {
+        throw new Error("invalid parameters");
+      }
+      const wantedProduct = await this.manager.getProductById(product.id);
+      if (user.role === "user" && user.email !== wantedProduct.owner) {
+        throw new Error("Not authorized");
       }
       await this.manager.updateProduct(product);
     } catch (err) {
@@ -90,16 +88,20 @@ class ProductService {
 
   deleteProduct = async (prodId, user) => {
     try {
-      try {
-        if (prodId === ":pId") {
-          throw new Error("invalid parameters");
-        }
-        const wantedProduct = await this.manager.getProductById(prodId);
-        if (user.role === "user" && user.email !== wantedProduct.owner) {
-          throw new Error("Not authorized");
-        }
-      } catch (err) {
-        throw Error(err.message);
+      if (prodId === ":pId") {
+        throw new Error("invalid parameters");
+      }
+      const wantedProduct = await this.manager.getProductById(prodId);
+      if (user.role === "user" && user.email !== wantedProduct.owner) {
+        throw new Error("Not authorized");
+      }
+      if (wantedProduct.owner !== "admin") {
+        await transport.sendMail({
+          from: process.env.GMAIL_ACCOUNT,
+          to: user.email,
+          subject: "Producto eliminado",
+          text: `Se ha eliminado el siguiente producto: ${wantedProduct.title}`,
+        });
       }
       await this.manager.deleteProduct(prodId);
     } catch (err) {
