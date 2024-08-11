@@ -172,6 +172,9 @@ class UserController {
             break;
         }
       }
+      if (!req.file || !name) {
+        throw new Error("missing data");
+      }
       const reference = req.file.path;
       const userId = req.params.uId;
       let user = await this.service.getUserById(userId);

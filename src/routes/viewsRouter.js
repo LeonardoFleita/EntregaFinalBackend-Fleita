@@ -188,6 +188,7 @@ router.get("/users/:uId/documents", isLoggedIn, isUser, async (req, res) => {
     css: ["styles.css"],
     endPoint: "Agregar documentos",
     loggedIn,
+    useSweetAlert: true,
     user,
     uId,
   });
