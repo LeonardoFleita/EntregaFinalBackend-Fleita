@@ -38,7 +38,7 @@ deleteButton.addEventListener("click", () => {
           title: "Usuario eliminado",
           icon: "success",
         }).then(() => {
-          window.location.href = "/api/users";
+          window.location.href = "/users";
         });
       } else {
         Swal.fire({

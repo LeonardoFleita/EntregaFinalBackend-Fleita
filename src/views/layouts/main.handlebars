@@ -19,11 +19,16 @@
           <p>Rol: {{user.role}}</p>
           {{#if isAdmin}}
             <a href="/addProducts">Agregar productos</a>
+            <a href="/users">Gestión de usuarios</a>
+          {{else}}
+            {{#if premium}}
+              <p>Premium</p>
+              <a href="/addProducts">Agregar productos</a>
+            {{/if}}
+            <a href="/users/{{user._id}}/documents">Cargar archivos</a>
+            <a href="/carts/{{user.cart}}">Carrito</a>
           {{/if}}
-          {{#if user}}
-            <a href="/users/{{uId}}/documents">Cargar archivos</a>
-          {{/if}}
-          <a href="/api/sessions/logoutView">Logout</a>
+          <a href="/" id="logout">Logout</a>
         {{else}}
           <a href="/login">Iniciar sesión</a>
           <a href="/register">Registrarse</a>
@@ -35,9 +40,8 @@
       {{{body}}}
     </main>
 
-    {{#if useSweetAlert}}
-      <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    {{/if}}
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     {{#each scripts}}
       <script src="/js/{{this}}"></script>
     {{/each}}

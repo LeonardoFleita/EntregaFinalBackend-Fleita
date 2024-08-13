@@ -32,8 +32,13 @@ async function userSession(req) {
   } else {
     loggedIn = false;
   }
-
-  return { user, loggedIn };
+  const isAdmin = user?.role === "admin" ? true : false;
+  const premium = user?.premium
+    ? user.premium === true
+      ? true
+      : false
+    : false;
+  return { user, loggedIn, isAdmin, premium };
 }
 
 //Mocking
@@ -43,16 +48,18 @@ router.get(`/mockingproducts`, async (req, res) => {
   for (let i = 0; i <= 100; i++) {
     products.push(generateProduct());
   }
-  const { user, loggedIn } = await userSession(req);
+  const { user, loggedIn, isAdmin, premium } = await userSession(req);
 
   res.render(`index`, {
     title: "Productos",
     products: products,
-    scripts: ["index.js"],
+    scripts: ["index.js", "logout.js"],
     css: ["styles.css"],
     endPoint: "Home",
+    isAdmin,
     loggedIn,
     user,
+    premium,
   });
 });
 
@@ -72,40 +79,34 @@ router.get(`/`, async (req, res) => {
     category,
     avaiability
   );
-  const { user, loggedIn } = await userSession(req);
-  const uId = user ? user._id : false;
-
-  const isAdmin = user?.role === "admin" ? true : false;
-  const userCart = user ? user.cart?.toString() : null;
+  const { user, loggedIn, isAdmin, premium } = await userSession(req);
 
   res.render(`index`, {
     title: "Productos",
     products: products.docs,
-    scripts: ["index.js"],
+    scripts: ["index.js", "logout.js"],
     css: ["styles.css"],
     endPoint: "Home",
     isAdmin,
     loggedIn,
     user,
-    userCart,
-    uId,
-    useSweetAlert: true,
+    premium,
   });
 });
 
 //Formulario para agregar productos a la base de datos
 
 router.get("/addProducts", isLoggedIn, productPermission, async (req, res) => {
-  const { user, loggedIn } = await userSession(req);
-  const uId = user ? user._id : false;
+  const { user, loggedIn, isAdmin, premium } = await userSession(req);
   res.render(`addProducts`, {
     title: "Formulario",
-    scripts: ["index.js"],
+    scripts: ["index.js", "logout.js", "productsForm.js"],
     css: ["styles.css"],
     endPoint: "Agregar productos",
+    isAdmin,
     loggedIn,
     user,
-    uId,
+    premium,
   });
 });
 
@@ -118,19 +119,17 @@ router.get("/carts/:cId", isLoggedIn, async (req, res) => {
   const products = cart.products.map((p) => {
     return { ...p, totalPrice: p.product.price * p.quantity };
   });
-  const { user, loggedIn } = await userSession(req);
-  const uId = user ? user._id : false;
+  const { user, loggedIn, isAdmin, premium } = await userSession(req);
   res.render("cart", {
     title: "Carrito",
     products: products,
-    scripts: ["index.js", "cart.js"],
+    scripts: ["index.js", "cart.js", "logout.js"],
     css: ["styles.css"],
     endPoint: "Cart",
     user,
-    cId,
+    isAdmin,
     loggedIn,
-    uId,
-    useSweetAlert: true,
+    premium,
   });
 });
 
@@ -139,6 +138,7 @@ router.get("/carts/:cId", isLoggedIn, async (req, res) => {
 router.get("/login", isNotLoggedIn, (req, res) => {
   res.render("login", {
     title: "Login",
+    scripts: ["login.js"],
     css: ["styles.css"],
     endPoint: "Login",
   });
@@ -149,7 +149,7 @@ router.get("/login", isNotLoggedIn, (req, res) => {
 router.get("/register", isNotLoggedIn, (req, res) => {
   res.render("register", {
     title: "Registro",
-    scripts: ["registerForm.js"],
+    scripts: ["register.js"],
     css: ["styles.css"],
     endPoint: "Registro",
   });
@@ -160,6 +160,7 @@ router.get("/register", isNotLoggedIn, (req, res) => {
 router.get("/forgotPassword", isNotLoggedIn, (req, res) => {
   res.render("forgotPassword", {
     title: "Envío de email",
+    scripts: ["restorePassword.js"],
     css: ["styles.css"],
     endPoint: "Envío de email",
   });
@@ -180,38 +181,74 @@ router.get("/restorePassword/:token", isNotLoggedIn, (req, res) => {
 //Formulario para que el usuario pueda cargar documentos
 
 router.get("/users/:uId/documents", isLoggedIn, isUser, async (req, res) => {
-  const { user, loggedIn } = await userSession(req);
-  const uId = user ? user._id : false;
+  const { user, loggedIn, isAdmin, premium } = await userSession(req);
   res.render(`uploader`, {
     title: "Formulario",
-    scripts: ["index.js", "documentForm.js"],
+    scripts: ["index.js", "documentForm.js", "logout.js"],
     css: ["styles.css"],
     endPoint: "Agregar documentos",
+    isAdmin,
     loggedIn,
-    useSweetAlert: true,
     user,
-    uId,
+    premium,
+  });
+});
+
+//Ver usuarios
+
+router.get("/users", async (req, res) => {
+  const userManager = req.app.get("userManager");
+  let users = await userManager.getUsers();
+  users = users.map((u) => new CurrentUserDto(u));
+  const { user, loggedIn, isAdmin, premium } = await userSession(req);
+  res.render("users", {
+    title: "Usuarios",
+    scripts: ["users.js", "logout.js"],
+    css: ["styles.css"],
+    endPoint: "Usuarios",
+    isAdmin,
+    loggedIn,
+    user,
+    users,
+    premium,
   });
 });
 
 //Ver y modificar rol de un usuario
 
-router.get(
-  "/manageUsers/:uId",
-  /*isLoggedIn, isAdmin,*/ async (req, res) => {
-    const uId = req.params.uId;
-    const userManager = req.app.get("userManager");
-    let user = await userManager.getUserById(uId);
-    user = new CurrentUserDto(user);
-    res.render(`manageUsers`, {
-      title: "Gestión de usuarios",
-      scripts: ["index.js", "manageUsers.js"],
-      user,
-      useSweetAlert: true,
-      css: ["styles.css"],
-      endPoint: "Gestionar usuarios",
-    });
-  }
-);
+router.get("/manageUsers/:uId", isLoggedIn, isAdmin, async (req, res) => {
+  const uId = req.params.uId;
+  const userManager = req.app.get("userManager");
+  let u = await userManager.getUserById(uId);
+  u = new CurrentUserDto(u);
+  const { user, loggedIn, isAdmin, premium } = await userSession(req);
+  res.render(`manageUsers`, {
+    title: "Gestión de usuarios",
+    scripts: ["manageUsers.js", "logout.js"],
+    css: ["styles.css"],
+    endPoint: "Gestionar usuarios",
+    isAdmin,
+    loggedIn,
+    user,
+    premium,
+    u,
+  });
+});
+
+//Compra
+
+router.get("/purchase", isLoggedIn, isUser, async (req, res) => {
+  const { user, loggedIn, isAdmin, premium } = await userSession(req);
+  res.render("purchase", {
+    title: "Gestión de usuarios",
+    scripts: ["logout.js"],
+    css: ["styles.css"],
+    endPoint: "Gestionar usuarios",
+    isAdmin,
+    loggedIn,
+    user,
+    premium,
+  });
+});
 
 module.exports = router;

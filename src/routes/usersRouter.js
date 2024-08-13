@@ -6,7 +6,7 @@ const {
   isLoggedIn,
   isAdmin,
 } = require("../middlewares/auth.middleware");
-const { uploader } = require("../utils/uploader");
+const { userDocs } = require("../utils/uploader");
 
 const router = Router();
 
@@ -39,7 +39,7 @@ router.post(
   "/:uId/documents",
   isLoggedIn,
   isUser,
-  uploader.single("document"),
+  userDocs.single("document"),
   withController((controller, req, res) => controller.uploadDocument(req, res))
 );
 

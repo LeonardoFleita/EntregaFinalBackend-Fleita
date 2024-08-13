@@ -6,6 +6,7 @@ const {
   productPermission,
 } = require("../middlewares/auth.middleware");
 const { generateProduct } = require("../mocks/generateProducts");
+const { productDocs } = require("../utils/uploader");
 
 const router = Router();
 
@@ -48,6 +49,7 @@ router.post(
   `/`,
   isLoggedIn,
   productPermission,
+  productDocs.array("thumbnail"),
   withController((controller, req, res) => controller.addProduct(req, res))
 );
 

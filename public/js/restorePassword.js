@@ -1,21 +1,18 @@
-//Register
+const forgotPasswordForm = document.getElementById("forgotPasswordForm");
 
-const registerForm = document.getElementById("registerForm");
-
-registerForm.addEventListener("submit", function (event) {
-  event.preventDefault();
-  register();
+forgotPasswordForm.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+  sendEmail();
 });
 
-function register() {
-  const formData = new FormData(registerForm);
-
+function sendEmail() {
+  const formData = new FormData(forgotPasswordForm);
   const formDataJSON = {};
   formData.forEach((value, key) => {
     formDataJSON[key] = value;
   });
 
-  fetch(`/api/sessions/register`, {
+  fetch(`/api/sessions/email`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -24,11 +21,13 @@ function register() {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
       if (res.status === "success") {
-        window.location.href = `/login`;
+        window.location.href = "/";
       } else {
-        console.error("Error:", res.error);
+        Swal.fire({
+          title: res.error,
+          icon: "error",
+        });
       }
     })
     .catch((error) => {

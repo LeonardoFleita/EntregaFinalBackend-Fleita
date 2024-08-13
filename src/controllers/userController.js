@@ -92,6 +92,9 @@ class UserController {
   sendPasswordEmail = async (req, res) => {
     try {
       const { email } = req.body;
+      if (!email) {
+        throw new Error("missing data");
+      }
       const user = await this.service.getUserByEmail(email);
       if (!user) {
         throw new Error("not found");
@@ -99,17 +102,14 @@ class UserController {
       const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, {
         expiresIn: "1h",
       });
-
       const restoreLink = `http://localhost:8080/restorePassword/${token}`;
-
       await transport.sendMail({
         from: process.env.GMAIL_ACCOUNT,
         to: user.email,
         subject: "Restore password",
         text: `Click on the next link to restore your password: ${restoreLink}`,
       });
-
-      res.status(200).send("Email sent");
+      res.status(200).json({ status: "success", message: "Email sent" });
     } catch (err) {
       res.status(404).json({ error: err.message });
     }
@@ -118,28 +118,21 @@ class UserController {
   restorePassword = async (req, res) => {
     try {
       const { password, token } = req.body;
-
       if (!password) {
         throw new Error("invalid parameters");
       }
-
       const verifiedToken = jwt.verify(token, process.env.SECRET_KEY);
       const email = verifiedToken.email;
       let user = await this.service.getUserByEmail(email);
-
       if (!user) {
         throw new Error("not found");
       }
-
       if (isValidPassword(password, user.password)) {
         throw new Error("You can't use the same password");
       }
       const hashedPassword = hashPassword(password);
-
       const updatedUser = { ...user, password: hashedPassword };
-
       await this.service.updateUser(updatedUser);
-
       res.redirect("/login");
     } catch (err) {
       if (err.name === "TokenExpiredError") {

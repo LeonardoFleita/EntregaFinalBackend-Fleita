@@ -117,6 +117,8 @@ class ProductController {
     try {
       const product = req.body;
       const user = req.session.user;
+      let thumbnails = req.files;
+      thumbnails = thumbnails.map((t) => t.path);
       let owner;
       if (user.role === "user") {
         owner = req.session.user.email;
@@ -127,7 +129,7 @@ class ProductController {
         product.title,
         product.description,
         product.price,
-        product.thumbnail,
+        thumbnails,
         product.code,
         product.stock,
         product.category,

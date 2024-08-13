@@ -22,7 +22,7 @@ const withUserController = (callback) => {
   };
 };
 
-//Permite registrar un usuario en la api
+//Permite registrar un usuario
 
 router.post(
   "/register",
@@ -30,32 +30,12 @@ router.post(
   withSessionController((controller, req, res) => controller.register(req, res))
 );
 
-//Permite iniciar sesión en la api
+//Permite iniciar sesión
 
 router.post(
   "/login",
   passportCall("login"),
   withSessionController((controller, req, res) => controller.login(req, res))
-);
-
-//Permite registrar un usuario en el front
-
-router.post(
-  "/registerView",
-  passportCall("register"),
-  withSessionController((controller, req, res) =>
-    controller.registerView(req, res)
-  )
-);
-
-//Permite iniciar sesión en el front
-
-router.post(
-  "/loginView",
-  passportCall("login"),
-  withSessionController((controller, req, res) =>
-    controller.loginView(req, res)
-  )
 );
 
 //Devuelve los datos del usuario logueado en un json
@@ -67,38 +47,29 @@ router.get(
   )
 );
 
-//Permite cerrar sesión en la api
+//Permite cerrar sesión
 
 router.get(
   "/logout",
   withSessionController((controller, req, res) => controller.logout(req, res))
 );
 
-//Permite cerrar sesión en el front
+//Envía un email para recuperar la contraseña
 
-router.get(
-  "/logoutView",
-  withSessionController((controller, req, res) =>
-    controller.logoutView(req, res)
+router.post(
+  "/email",
+  withUserController((controller, req, res) =>
+    controller.sendPasswordEmail(req, res)
   )
 );
 
-/*
-//Permite iniciar sesión con github
+//Cambia la contraseña
 
-router.get(
-  "/github",
-  passport.authenticate("github", { scope: ["user:email"] }),
-  () => {}
-);
-
-router.get(
-  "/githubcallback",
-  passport.authenticate("github", { failureRedirect: "/login" }),
-  withSessionController((controller, req, res) =>
-    controller.githubLogin(req, res)
+router.post(
+  "/restorePassword",
+  withUserController((controller, req, res) =>
+    controller.restorePassword(req, res)
   )
 );
-*/
 
 module.exports = router;

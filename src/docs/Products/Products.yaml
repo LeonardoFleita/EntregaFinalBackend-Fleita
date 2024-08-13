@@ -151,7 +151,7 @@ components:
           description: Precio del producto
         thumbnail:
           type: Array
-          description: Arreglo de urls que poseen imagen del producto
+          description: Arreglo de urls que representan imagen del producto
         code:
           type: String
           description: Código del producto

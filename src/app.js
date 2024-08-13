@@ -3,18 +3,12 @@ const express = require("express");
 const handlebars = require("express-handlebars");
 const mongoose = require("mongoose");
 const sessionMiddle = require("./session/mongoStorage");
-const productsRouter = require(`${__dirname}/routes/productsRouter`);
-const cartsRouter = require(`${__dirname}/routes/cartsRouter`);
+const configRouters = require(`${__dirname}/routes/routers.js`);
 const CartManager = require(`${__dirname}/dao/dbManagers/cartManager`);
-const viewsRouter = require(`${__dirname}/routes/viewsRouter`);
-const sessionRouter = require(`${__dirname}/routes/sessionRouter`);
-const usersRouter = require(`${__dirname}/routes/usersRouter`);
-const emailRouter = require(`${__dirname}/routes/emailRouter`);
 const UserManager = require(`${__dirname}/dao/dbManagers/userManager`);
 const ProductManager = require(`${__dirname}/dao/dbManagers/productManager`);
 const passport = require("passport");
 const initializePassport = require("./config/passport-local.config");
-const initializePassportGithub = require("./config/passport-github.config");
 const { admin, superAdmin } = require("./utils/admin");
 const { errorHandler } = require("./errors/errorHandler");
 const { useLogger } = require("./utils/logger");
@@ -25,16 +19,34 @@ const app = express();
 
 app.use(sessionMiddle);
 
+//Logger
+
 app.use(useLogger);
 
+app.use("/loggerTest", (req, res) => {
+  req.logger.debug("debug");
+  req.logger.http("http");
+  req.logger.info("info");
+  req.logger.warning("warning");
+  req.logger.error("error");
+  req.logger.fatal("fatal");
+  res.send("Logger");
+});
+
+//Passport
+
 initializePassport();
-initializePassportGithub();
+
 app.use(passport.initialize());
 app.use(passport.session());
+
+//Express config
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(`${__dirname}/../public`));
+
+//Swagger
 
 const swaggerOptions = {
   definition: {
@@ -50,29 +62,19 @@ const specs = swaggerJSDoc(swaggerOptions);
 
 app.use("/apidocs", serve, setup(specs));
 
+//Handlebars config
+
 app.engine(`handlebars`, handlebars.engine());
 app.set(`views`, `${__dirname}/views`);
 app.set(`view engine`, `handlebars`);
 
-app.use("/api/products", productsRouter);
-app.use("/api/carts", cartsRouter);
-app.use("/api/sessions", sessionRouter);
-app.use("/api/users", usersRouter);
-app.use("/api/email", emailRouter);
+//Routers
 
-app.use(`/`, viewsRouter);
-
-app.use("/loggerTest", (req, res) => {
-  req.logger.debug("debug");
-  req.logger.http("http");
-  req.logger.info("info");
-  req.logger.warning("warning");
-  req.logger.error("error");
-  req.logger.fatal("fatal");
-  res.send("Logger");
-});
+configRouters(app);
 
 app.use(errorHandler);
+
+//Función de ejecución
 
 const execute = async () => {
   try {
