@@ -20,6 +20,6 @@
       </div>
     {{/each}}
     <button id="cleanCart" data-cartId="{{user.cart}}">Limpiar carrito</button>
-    <button id="comprar">Comprar</button>
+    <button id="comprar" onclick="purchase('{{user.cart}}')">Comprar</button>
   </div>
 </article>

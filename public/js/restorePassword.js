@@ -1,3 +1,5 @@
+//Restaurar contraseña
+
 const forgotPasswordForm = document.getElementById("forgotPasswordForm");
 
 forgotPasswordForm.addEventListener("submit", (evt) => {

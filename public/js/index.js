@@ -1,4 +1,4 @@
-//Agregar al carrito
+//Agregar producto al carrito
 
 function addToCart(product, cart) {
   let cartId = cart ? cart : ":cId";

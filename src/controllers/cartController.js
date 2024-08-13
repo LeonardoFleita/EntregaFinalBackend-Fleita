@@ -104,12 +104,10 @@ class CartController {
         throw new Error("not authorized");
       }
       await this.service.deleteProductFromCart(cartId, prodId);
-      res
-        .status(200)
-        .json({
-          status: "success",
-          message: `Se eliminó el producto con id${prodId} del carrito`,
-        });
+      res.status(200).json({
+        status: "success",
+        message: `Se eliminó el producto con id${prodId} del carrito`,
+      });
     } catch (err) {
       return this.#handleError(res, err);
     }
@@ -169,7 +167,7 @@ class CartController {
         user.email,
         productManager
       );
-      res.status(200).json({ status: "Success", payload: ticket });
+      res.status(200).json({ status: "success", payload: ticket });
     } catch (err) {
       return this.#handleError(res, err);
     }

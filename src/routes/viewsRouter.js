@@ -241,7 +241,7 @@ router.get("/purchase", isLoggedIn, isUser, async (req, res) => {
   const { user, loggedIn, isAdmin, premium } = await userSession(req);
   res.render("purchase", {
     title: "Gestión de usuarios",
-    scripts: ["logout.js"],
+    scripts: ["purchase.js", "logout.js"],
     css: ["styles.css"],
     endPoint: "Gestionar usuarios",
     isAdmin,

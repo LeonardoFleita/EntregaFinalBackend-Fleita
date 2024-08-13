@@ -101,3 +101,28 @@ cleanCartBttn.addEventListener("click", () => {
     )
     .catch((err) => console.log(err));
 });
+
+//Realiza la compra
+
+function purchase(cartId) {
+  fetch(`/api/carts/${cartId}/purchase`, { method: "POST" })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res);
+      if (res.status === "success") {
+        const ticket = res.payload.ticket;
+        sessionStorage.setItem("ticket", JSON.stringify(ticket));
+        if (res.payload.sinComprar) {
+          const sinComprar = res.payload.sinComprar;
+          sessionStorage.setItem("sinComprar", JSON.stringify(sinComprar));
+        }
+        window.location.href = "/purchase";
+      } else {
+        Swal.fire({
+          title: res.error,
+          icon: "error",
+        });
+      }
+    })
+    .catch((err) => console.log(err));
+}

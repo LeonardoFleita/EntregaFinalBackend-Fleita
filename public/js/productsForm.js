@@ -1,3 +1,5 @@
+//Carga de productos
+
 const productsForm = document.getElementById("productsForm");
 
 productsForm.addEventListener("submit", (evt) => {

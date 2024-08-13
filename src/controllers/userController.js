@@ -195,6 +195,11 @@ class UserController {
       const expiredUsers = users.filter(
         (u) => moment().diff(u.lastConnection, "days") > 2
       );
+      if (expiredUsers.length < 1) {
+        return res
+          .status(200)
+          .json({ status: "info", message: "no hay usuarios inactivos" });
+      }
       let expiredUsersIds = expiredUsers.map((u) => u._id.toString());
       let expiredUsersEmails = expiredUsers.map((u) => u.email);
       let expiredCartsIds = expiredUsers.map((u) => u.cart.toString());

@@ -2,6 +2,8 @@ const switchButton = document.getElementById("switchRole");
 const userId = document.getElementById("userId");
 const deleteButton = document.getElementById("deleteUser");
 
+//Habilitar o deshabilitar premisos premium
+
 switchButton.addEventListener("click", () => {
   const id = userId.textContent;
   fetch(`/api/users/premium/${id}`, { method: "POST" })
@@ -27,6 +29,8 @@ switchButton.addEventListener("click", () => {
       console.error(err);
     });
 });
+
+//Eliminar usuario
 
 deleteButton.addEventListener("click", () => {
   const id = userId.textContent;

@@ -1,3 +1,5 @@
+// Mostrar u ocultar el campo name
+
 function toggleNameField() {
   const typeSelect = document.getElementById("type");
   const nameField = document.getElementById("name");
@@ -14,6 +16,8 @@ function toggleNameField() {
 document.addEventListener("DOMContentLoaded", () => {
   toggleNameField();
 });
+
+//Cargar archivos
 
 const documentsForm = document.getElementById("documentsForm");
 const userId = documentsForm.getAttribute("data-userId");
