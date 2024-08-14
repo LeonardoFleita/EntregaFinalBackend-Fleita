@@ -15,6 +15,9 @@
           style="margin-top: 1rem;"
           onclick="addToCart('{{id}}', '{{@root.user.cart}}')"
         >Agregar al carrito</button>
+        {{#if @root.isAdmin}}
+          <button onclick="deleteProduct('{{id}}')">Eliminar producto</button>
+        {{/if}}
       </div>
     {{/each}}
   </div>

@@ -76,7 +76,7 @@ class ProductService {
       }
       const wantedProduct = await this.manager.getProductById(product.id);
       if (user.role === "user" && user.email !== wantedProduct.owner) {
-        throw new Error("Not authorized");
+        throw new Error("not authorized");
       }
       await this.manager.updateProduct(product);
     } catch (err) {
@@ -93,7 +93,7 @@ class ProductService {
       }
       const wantedProduct = await this.manager.getProductById(prodId);
       if (user.role === "user" && user.email !== wantedProduct.owner) {
-        throw new Error("Not authorized");
+        throw new Error("not authorized");
       }
       if (wantedProduct.owner !== "admin") {
         await transport.sendMail({

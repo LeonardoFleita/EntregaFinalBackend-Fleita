@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const admin = {
   firstName: "Coder",
   lastName: "House",

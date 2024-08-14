@@ -64,7 +64,7 @@ class UserManager {
       const user = await UserModel.findOne({ email });
       return user ? user.toObject() : null;
     } catch (err) {
-      throw Error(err.message);
+      throw Error(err);
     }
   };
 
@@ -78,7 +78,7 @@ class UserManager {
     }
   };
 
-  //Eliminar usuarios
+  //Eliminar múltiples usuarios
 
   deleteUsers = async (users) => {
     try {

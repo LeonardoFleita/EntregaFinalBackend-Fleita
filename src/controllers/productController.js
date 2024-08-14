@@ -44,6 +44,15 @@ class ProductController {
       });
     }
 
+    if (err.message === "not authorized") {
+      throw CustomError.createError({
+        name: err.message,
+        cause: "User not authorized",
+        message: "you are not authorized to do that",
+        code: ErrorCodes.NOT_AUTHORIZED,
+      });
+    }
+
     throw CustomError.createError({
       name: err.message,
       cause: err.message,
@@ -117,8 +126,11 @@ class ProductController {
     try {
       const product = req.body;
       const user = req.session.user;
-      let thumbnails = req.files;
-      thumbnails = thumbnails.map((t) => t.path);
+      let thumbnails = [];
+      if (req.files) {
+        thumbnails = req.files;
+        thumbnails = thumbnails.map((t) => `/files/products/${t.filename}`);
+      }
       let owner;
       if (user.role === "user") {
         owner = req.session.user.email;

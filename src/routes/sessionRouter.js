@@ -3,6 +3,12 @@ const passportCall = require("../utils/passportCall");
 const { UserController } = require("../controllers/userController");
 const { SessionController } = require("../controllers/sessionController");
 const { UserService } = require("../services/userService");
+const {
+  isUser,
+  isLoggedIn,
+  isNotLoggedIn,
+  isAdmin,
+} = require("../middlewares/auth.middleware");
 
 const router = Router();
 
@@ -26,6 +32,7 @@ const withUserController = (callback) => {
 
 router.post(
   "/register",
+  isNotLoggedIn,
   passportCall("register"),
   withSessionController((controller, req, res) => controller.register(req, res))
 );
@@ -34,6 +41,7 @@ router.post(
 
 router.post(
   "/login",
+  isNotLoggedIn,
   passportCall("login"),
   withSessionController((controller, req, res) => controller.login(req, res))
 );
@@ -42,6 +50,7 @@ router.post(
 
 router.get(
   "/current",
+  isLoggedIn,
   withUserController((controller, req, res) =>
     controller.getSessionUser(req, res)
   )
@@ -51,6 +60,7 @@ router.get(
 
 router.get(
   "/logout",
+  isLoggedIn,
   withSessionController((controller, req, res) => controller.logout(req, res))
 );
 
@@ -58,6 +68,7 @@ router.get(
 
 router.post(
   "/email",
+  isNotLoggedIn,
   withUserController((controller, req, res) =>
     controller.sendPasswordEmail(req, res)
   )
@@ -67,6 +78,7 @@ router.post(
 
 router.post(
   "/restorePassword",
+  isNotLoggedIn,
   withUserController((controller, req, res) =>
     controller.restorePassword(req, res)
   )

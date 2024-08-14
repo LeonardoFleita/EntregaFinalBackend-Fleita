@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("../envConfig");
 const express = require("express");
 const handlebars = require("express-handlebars");
 const mongoose = require("mongoose");
@@ -12,17 +12,22 @@ const initializePassport = require("./config/passport-local.config");
 const { admin, superAdmin } = require("./utils/admin");
 const { errorHandler } = require("./errors/errorHandler");
 const { useLogger } = require("./utils/logger");
-const swaggerJSDoc = require("swagger-jsdoc");
-const { serve, setup } = require("swagger-ui-express");
+const swaggerSetup = require("./config/swagger");
+
+console.log(process.env.NODE_ENV);
+
+//Express config
 
 const app = express();
 
 app.use(sessionMiddle);
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static(`${__dirname}/../public`));
 
 //Logger
 
 app.use(useLogger);
-
 app.use("/loggerTest", (req, res) => {
   req.logger.debug("debug");
   req.logger.http("http");
@@ -36,31 +41,8 @@ app.use("/loggerTest", (req, res) => {
 //Passport
 
 initializePassport();
-
 app.use(passport.initialize());
 app.use(passport.session());
-
-//Express config
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static(`${__dirname}/../public`));
-
-//Swagger
-
-const swaggerOptions = {
-  definition: {
-    openapi: "3.0.1",
-    info: {
-      title: "Backend project Coderhouse",
-      description: "API for ecommerce",
-    },
-  },
-  apis: [`${__dirname}/docs/**/*.yaml`],
-};
-const specs = swaggerJSDoc(swaggerOptions);
-
-app.use("/apidocs", serve, setup(specs));
 
 //Handlebars config
 
@@ -71,6 +53,12 @@ app.set(`view engine`, `handlebars`);
 //Routers
 
 configRouters(app);
+
+//Swagger (/apidocs)
+
+swaggerSetup(app);
+
+//Errorhandler
 
 app.use(errorHandler);
 

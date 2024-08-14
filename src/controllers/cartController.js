@@ -16,6 +16,10 @@ class CartController {
       return res.status(403).json({ error: "Not authorized" });
     }
 
+    if (err.message === "selected products are out of stock") {
+      return res.status(409).json({ error: err.message });
+    }
+
     return res.status(500).json({ error: err.message });
   }
 
@@ -24,7 +28,7 @@ class CartController {
   getCarts = async (req, res) => {
     try {
       const carts = await this.service.getCarts();
-      res.status(200).send({ status: "Success", payload: carts });
+      res.status(200).send({ status: "success", payload: carts });
     } catch (err) {
       return this.#handleError(res, err);
     }
@@ -35,7 +39,7 @@ class CartController {
   addCart = async (req, res) => {
     try {
       const cart = await this.service.addCart();
-      res.status(200).send({ status: "Success", payload: cart });
+      res.status(200).send({ status: "success", payload: cart });
     } catch (err) {
       return this.#handleError(res, err);
     }
@@ -47,7 +51,7 @@ class CartController {
     try {
       const cartId = req.params.cId;
       const cart = await this.service.getCartById(cartId);
-      res.status(200).json({ status: "Success", payload: cart });
+      res.status(200).json({ status: "success", payload: cart });
     } catch (err) {
       return this.#handleError(res, err);
     }
@@ -87,7 +91,7 @@ class CartController {
         throw new Error("not authorized");
       }
       const cleanedCart = await this.service.cleanCart(cartId);
-      res.status(200).send({ status: "Success", payload: cleanedCart });
+      res.status(200).send({ status: "success", payload: cleanedCart });
     } catch (err) {
       return this.#handleError(res, err);
     }
@@ -125,7 +129,7 @@ class CartController {
       }
       await this.service.updateProductsFromCart(cartId, data);
       const cart = await this.service.getCartById(cartId);
-      res.status(200).json({ status: "Success", payload: cart });
+      res.status(200).json({ status: "success", payload: cart });
     } catch (err) {
       return this.#handleError(res, err);
     }

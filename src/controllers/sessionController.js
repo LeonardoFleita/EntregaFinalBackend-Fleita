@@ -10,9 +10,13 @@ class SessionController {
     return dateAndHour;
   };
 
+  //Registra un usuario
+
   register = async (req, res) => {
     res.json({ status: "success", message: "successful registration" });
   };
+
+  //Inicio de sesión
 
   login = async (req, res) => {
     const user = req.user;
@@ -29,8 +33,10 @@ class SessionController {
       await this.service.updateUser(updatedUser);
     }
     const userSession = req.session.user;
-    res.send({ status: "success", userSession });
+    res.json({ status: "success", userSession });
   };
+
+  //Cierre de sesión
 
   logout = async (req, res) => {
     try {

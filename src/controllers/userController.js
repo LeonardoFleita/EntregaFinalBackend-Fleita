@@ -1,6 +1,5 @@
 const { CurrentUserDto } = require("../dto/currentUser.dto");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
 const { hashPassword, isValidPassword } = require("../utils/hashing");
 const moment = require("moment-timezone");
 const { transport } = require("../utils/transportMailing");
@@ -10,15 +9,39 @@ class UserController {
     this.service = userService;
   }
 
+  #handleError(res, err) {
+    if (err.message === "not found") {
+      return res.status(404).json({ error: "Not found" });
+    }
+
+    if (err.message === "invalid parameters") {
+      return res.status(400).json({ error: "Invalid parameters" });
+    }
+
+    if (err.message === "not authorized") {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    if (err.message === "not authenticated") {
+      return res.status(401).json({ error: "authenticated" });
+    }
+
+    return res.status(500).json({ error: err.message });
+  }
+
+  //Trae todos los usuarios
+
   getUsers = async (req, res) => {
     try {
       let users = await this.service.getUsers();
       users = users.map((u) => (u = new CurrentUserDto(u)));
       res.status(200).json({ status: "success", payload: users });
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      return this.#handleError(res, err);
     }
   };
+
+  //Busca un usuario por su id
 
   getUserById = async (req, res) => {
     try {
@@ -27,15 +50,17 @@ class UserController {
       user = new CurrentUserDto(user);
       res.status(200).json({ status: "success", payload: user });
     } catch (err) {
-      res.status(404).json({ error: err.message });
+      return this.#handleError(res, err);
     }
   };
+
+  //Trae los datos del usuario que tiene la sesión activa
 
   getSessionUser = async (req, res) => {
     try {
       const sessionUser = req.session.user;
       if (!sessionUser) {
-        throw new Error("there is not session");
+        throw new Error("not authenticated");
       }
       const admin = req.app.get("admin");
       const superAdmin = req.app.get("superAdmin");
@@ -58,9 +83,11 @@ class UserController {
       user = new CurrentUserDto(userWanted);
       res.status(200).json({ user });
     } catch (err) {
-      res.status(401).json({ error: err.message });
+      return this.#handleError(res, err);
     }
   };
+
+  //Setea a un usuario como premium
 
   setPremiumUser = async (req, res) => {
     try {
@@ -75,7 +102,7 @@ class UserController {
         ) {
           user.premium = true;
         } else {
-          return res.status(400).json({ error: "falta documentación" });
+          return res.status(400).json({ error: "missing data" });
         }
       } else {
         user.premium = false;
@@ -85,20 +112,19 @@ class UserController {
       updatedUser = new CurrentUserDto(updatedUser);
       res.status(200).json({ status: "success", updatedUser });
     } catch (err) {
-      res.status(403).json({ error: err.message });
+      return this.#handleError(res, err);
     }
   };
+
+  //Envía link para reestablecer la contraseña
 
   sendPasswordEmail = async (req, res) => {
     try {
       const { email } = req.body;
       if (!email) {
-        throw new Error("missing data");
+        throw new Error("invalid parameters");
       }
       const user = await this.service.getUserByEmail(email);
-      if (!user) {
-        throw new Error("not found");
-      }
       const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, {
         expiresIn: "1h",
       });
@@ -111,9 +137,11 @@ class UserController {
       });
       res.status(200).json({ status: "success", message: "Email sent" });
     } catch (err) {
-      res.status(404).json({ error: err.message });
+      return this.#handleError(res, err);
     }
   };
+
+  //Restaura la contraseña
 
   restorePassword = async (req, res) => {
     try {
@@ -139,9 +167,11 @@ class UserController {
         req.logger.info("Token expired");
         return res.redirect("/forgotPassword");
       }
-      res.status(404).json({ error: err.message });
+      return this.#handleError(res, err);
     }
   };
+
+  //Carga documentos
 
   uploadDocument = async (req, res) => {
     try {
@@ -166,9 +196,16 @@ class UserController {
         }
       }
       if (!req.file || !name) {
-        throw new Error("missing data");
+        throw new Error("invalid parameters");
       }
-      const reference = req.file.path;
+      let reference;
+      if (type === "product") {
+        reference = `/files/products/${req.file.filename}`;
+      } else if (type === "other") {
+        reference = `/files/documents/${req.file.filename}`;
+      } else {
+        reference = `/files/profiles/${req.file.filename}`;
+      }
       const userId = req.params.uId;
       let user = await this.service.getUserById(userId);
       let updatedDocs = user.documents.map((doc) =>
@@ -182,11 +219,13 @@ class UserController {
         user.documentStatus[name] = true;
       }
       await this.service.updateUser(user);
-      res.status(200).json({ status: "success", payload: "Archivo cargado" });
+      res.status(200).json({ status: "success", message: "File uploaded" });
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      return this.#handleError(res, err);
     }
   };
+
+  //Elimina usuarios inactivos
 
   deleteUsers = async (req, res) => {
     try {
@@ -198,7 +237,7 @@ class UserController {
       if (expiredUsers.length < 1) {
         return res
           .status(200)
-          .json({ status: "info", message: "no hay usuarios inactivos" });
+          .json({ status: "info", message: "there are not inactive users" });
       }
       let expiredUsersIds = expiredUsers.map((u) => u._id.toString());
       let expiredUsersEmails = expiredUsers.map((u) => u.email);
@@ -212,19 +251,20 @@ class UserController {
             text: `Hola ${u.firstName}, le informamos que su cuenta ha sido eliminada de nuestra base de datos por inactividad`,
           })
       );
-
       await cartManager.deleteCarts(expiredCartsIds);
       await this.service.deleteUsers(expiredUsersIds);
       res.status(200).send({
         status: "success",
-        message: `Han sido eliminadas las cuentas pertenecientes a las siguientes direcciones de correo electrónico: ${expiredUsersEmails.join(
+        message: `The following accounts has been deleted: ${expiredUsersEmails.join(
           ", "
         )}`,
       });
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      return this.#handleError(res, err);
     }
   };
+
+  //Elimina un usuario
 
   deleteUserById = async (req, res) => {
     try {
@@ -237,7 +277,21 @@ class UserController {
         .status(200)
         .json({ status: "success", message: "user succesfully deleted" });
     } catch (err) {
-      res.status(404).json({ error: err.message });
+      return this.#handleError(res, err);
+    }
+  };
+
+  //Actualiza un usuario a premium (sólo utilizado para testing, evitando así la carga de documentos necesarios para poder actualizar realmente a premium)
+
+  updateUser = async (req, res) => {
+    try {
+      const userId = req.params.uId;
+      let user = await this.service.getUserById(userId);
+      user.premium = true;
+      await this.service.updateUser(user);
+      res.status(200).json({ status: "success", payload: user });
+    } catch (err) {
+      return this.#handleError(res, err);
     }
   };
 }

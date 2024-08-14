@@ -1,6 +1,6 @@
 const supertest = require("supertest");
 const mongoose = require("mongoose");
-require("dotenv").config();
+require("dotenv").config({ path: ".env.test" });
 
 const requester = supertest.agent("http://localhost:8080");
 
@@ -13,7 +13,7 @@ describe("Testing de carts", () => {
   before(async function () {
     chai = await import("chai");
     expect = chai.expect;
-    this.timeout(10000);
+    this.timeout(20000);
 
     //Conexión a mongo
 
@@ -41,7 +41,7 @@ describe("Testing de carts", () => {
     const userId = login.body.userSession.id;
 
     //Seteo del usuario como premium para poder crear un producto
-    await requester.post(`/api/users/premium/${userId}`);
+    await requester.put(`/api/users/${userId}`);
 
     //Logout y login para reflejar los cambios
     await requester.get("/api/sessions/logout");
@@ -55,13 +55,13 @@ describe("Testing de carts", () => {
       title: "test",
       description: "test",
       price: 25,
-      thumbnail: "",
+      thumbnail: [],
       code: "test123",
       stock: 25,
       category: "test",
     };
 
-    await requester.post("/api/products").send(productMock);
+    await requester.post("/api/products/").send(productMock);
 
     //Obtener id del producto
 
@@ -96,7 +96,7 @@ describe("Testing de carts", () => {
     await this.connection.close();
   });
 
-  it("El endpoint /api/carts/:cId/producst/:pId debe agregar un producto al carrito", async () => {
+  it("El endpoint /api/carts/:cId/products/:pId debe agregar un producto al carrito", async () => {
     const cart = await requester.post(
       `/api/carts/${cartId}/products/${productId}`
     );

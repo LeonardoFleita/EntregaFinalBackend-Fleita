@@ -1,6 +1,6 @@
 const supertest = require("supertest");
 const mongoose = require("mongoose");
-require("dotenv").config();
+require("dotenv").config({ path: ".env.test" });
 
 const requester = supertest.agent("http://localhost:8080");
 
@@ -11,7 +11,7 @@ describe("Testing de products", () => {
   before(async function () {
     chai = await import("chai");
     expect = chai.expect;
-    this.timeout(10000);
+    this.timeout(20000);
 
     //Conexión a mongo
 
@@ -39,7 +39,7 @@ describe("Testing de products", () => {
     const userId = login.body.userSession.id;
 
     //Seteo del usuario como premium
-    await requester.post(`/api/users/premium/${userId}`);
+    await requester.put(`/api/users/${userId}`);
 
     //Logout y login para reflejar los cambios
     await requester.get("/api/sessions/logout");

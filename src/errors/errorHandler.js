@@ -16,6 +16,9 @@ const errorHandler = (error, req, res, next) => {
     case ErrorCodes.NOT_FOUND:
       res.status(404).send({ status: "error", error: error.name });
       break;
+    case ErrorCodes.NOT_AUTHORIZED:
+      res.status(403).send({ status: "error", error: error.name });
+      break;
     case ErrorCodes.DATABASE_ERROR:
       res.status(500).send({ status: "error", error: error.name });
       break;

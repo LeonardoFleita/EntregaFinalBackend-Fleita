@@ -3,6 +3,8 @@ class UserService {
     this.manager = userManager;
   }
 
+  //Trae todos los usuarios
+
   getUsers = async () => {
     try {
       const users = await this.manager.getUsers();
@@ -11,6 +13,8 @@ class UserService {
       throw Error(err.message);
     }
   };
+
+  //Busca un usuario por su id
 
   getUserById = async (id) => {
     try {
@@ -23,6 +27,8 @@ class UserService {
     }
   };
 
+  //Busca un usuario por su email
+
   getUserByEmail = async (email) => {
     try {
       return await this.manager.getUserByEmail(email);
@@ -30,6 +36,8 @@ class UserService {
       throw Error(err.message);
     }
   };
+
+  //Actualiza un usuario
 
   updateUser = async (user) => {
     try {
@@ -39,6 +47,8 @@ class UserService {
     }
   };
 
+  //Elimina múltiples usuarios
+
   deleteUsers = async (users) => {
     try {
       await this.manager.deleteUsers(users);
@@ -46,6 +56,8 @@ class UserService {
       throw Error(err.message);
     }
   };
+
+  //Elimina un usuario
 
   deleteUserById = async (userId) => {
     try {

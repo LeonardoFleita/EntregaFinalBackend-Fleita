@@ -141,11 +141,11 @@ class CartService {
       );
 
       if (productsInStock.length === 0 && productsOutOfStock.length === 0) {
-        throw new Error("empty cart");
+        throw new Error("invalid parameters");
       }
 
       if (productsInStock.length === 0) {
-        throw new Error("Selected products are out of stock");
+        throw new Error("selected products are out of stock");
       }
 
       const totalPrice = (products) => {

@@ -35,3 +35,24 @@ function addToCart(product, cart) {
     })
     .catch((err) => console.error(err));
 }
+
+//Eliminar producto
+
+function deleteProduct(prodId) {
+  fetch(`/api/products/${prodId}`, { method: "DELETE" })
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.status === "success") {
+        Swal.fire({
+          title: "Producto eliminado",
+          icon: "success",
+        }).then(() => window.location.reload());
+      } else {
+        Swal.fire({
+          title: res.error,
+          icon: "error",
+        });
+      }
+    })
+    .catch((err) => console.error(err));
+}

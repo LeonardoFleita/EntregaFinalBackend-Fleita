@@ -1,6 +1,6 @@
 const supertest = require("supertest");
 const mongoose = require("mongoose");
-require("dotenv").config();
+require("dotenv").config({ path: ".env.test" });
 
 const requester = supertest.agent("http://localhost:8080");
 
@@ -11,7 +11,7 @@ describe("Testing de sessions", () => {
   before(async function () {
     chai = await import("chai");
     expect = chai.expect;
-    this.timeout(10000);
+    this.timeout(20000);
 
     //Conexión a mongo
 
