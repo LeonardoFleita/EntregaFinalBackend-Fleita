@@ -1,4 +1,4 @@
-const { CustomError } = require("../errors/customError");
+const { CustomError } = require(`${__dirname}/../errors/customError`);
 const { ErrorCodes } = require("../errors/errorCodes");
 const { generateInvalidProductData, invalidId } = require("../errors/errors");
 
