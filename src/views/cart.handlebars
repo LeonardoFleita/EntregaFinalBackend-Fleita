@@ -1,25 +1,37 @@
 <article>
-  <h2>Productos</h2>
-  <div id="cartContainer">
-    {{#each products}}
-      <div
-        class="cartCard"
-        data-prodId="{{product._id}}"
-        data-quantity="{{quantity}}"
-      >
-        <img src="{{product.thumbnail}}" alt={{product.title}} />
-        <h3>{{product.title}}</h3>
-        <p>Precio: {{product.price}}</p>
-        <p>Código: {{product.code}}</p>
-        <h4>Cantidad:
-          <button class="substract">-</button>{{quantity}}<button
-            class="add"
-          >+</button></h4>
-        <h4>Precio total: {{totalPrice}}</h4>
-        <button class="deleteProduct">Eliminar</button>
+  <h1>Carrito</h1>
+  <div class="container">
+    <div class="cartContainer">
+      {{#each products}}
+        <div
+          class="cartCard"
+          data-prodId="{{product._id}}"
+          data-quantity="{{quantity}}"
+        >
+          <img src="{{product.thumbnail}}" alt={{product.title}} />
+          <h3>{{product.title}}</h3>
+          <p>Precio: {{product.price}}</p>
+          <p>Código: {{product.code}}</p>
+          <h4>Cantidad:
+            <button class="substract">-</button>
+            {{quantity}}
+            <button class="add">+</button></h4>
+          <h4>Precio total: {{totalPrice}}</h4>
+          <button class="deleteProduct myFormButton">Eliminar</button>
+        </div>
+      {{/each}}
+      <div class="cartButton">
+        <button
+          class="myDeleteButton"
+          id="cleanCart"
+          data-cartId="{{user.cart}}"
+        >Limpiar carrito</button>
+        <button
+          class="myButton"
+          id="comprar"
+          onclick="purchase('{{user.cart}}')"
+        >Comprar</button>
       </div>
-    {{/each}}
-    <button id="cleanCart" data-cartId="{{user.cart}}">Limpiar carrito</button>
-    <button id="comprar" onclick="purchase('{{user.cart}}')">Comprar</button>
+    </div>
   </div>
 </article>

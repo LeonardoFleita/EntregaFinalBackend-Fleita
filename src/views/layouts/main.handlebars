@@ -8,38 +8,40 @@
     <title>{{title}}</title>
   </head>
   <body>
-    <header
-      style="text-align: center; background-color: darkolivegreen; color: white"
-    >
-      <h1>{{endPoint}}</h1>
-      <div class="navbarLogin">
-        {{#if loggedIn}}
-          <p>Bienvenido/a {{user.firstName}} {{user.lastName}}</p>
-          <p>email: {{user.email}}</p>
-          <p>Rol: {{user.role}}</p>
-          {{#if isAdmin}}
-            <a href="/addProducts">Agregar productos</a>
-            <a href="/users">Gestión de usuarios</a>
-          {{else}}
-            {{#if premium}}
-              <p>Premium</p>
-              <a href="/addProducts">Agregar productos</a>
+    <header>
+      <nav>
+        <a href="/" class="home">Market</a>
+        <div class="navbarLogin">
+          {{#if loggedIn}}
+            <p>Bienvenido/a {{user.firstName}} {{user.lastName}}</p>
+            <p>email: {{user.email}}</p>
+            <p>Rol: {{user.role}}</p>
+            {{#if isAdmin}}
+              <a href="/addProducts">Cargar productos</a>
+              <a href="/users">Gestión de usuarios</a>
+            {{else}}
+              {{#if premium}}
+                <p>Premium</p>
+                <a href="/addProducts">Cargar productos</a>
+              {{/if}}
+              <a href="/users/{{user._id}}/documents">Cargar archivos</a>
+              <a href="/carts/{{user.cart}}">Carrito</a>
             {{/if}}
-            <a href="/users/{{user._id}}/documents">Cargar archivos</a>
-            <a href="/carts/{{user.cart}}">Carrito</a>
+            <a href="/" id="logout">Logout</a>
+          {{else}}
+            <a href="/login">Iniciar sesión</a>
+            <a href="/register">Registrarse</a>
           {{/if}}
-          <a href="/" id="logout">Logout</a>
-        {{else}}
-          <a href="/login">Iniciar sesión</a>
-          <a href="/register">Registrarse</a>
-        {{/if}}
-      </div>
+        </div>
+      </nav>
     </header>
     <main>
 
       {{{body}}}
     </main>
-
+    <footer>
+      <p>Leonardo Javier Fleita - Entrega final Backend</p>
+    </footer>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     {{#each scripts}}

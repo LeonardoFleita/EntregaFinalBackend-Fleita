@@ -1,0 +1,144 @@
+@import "./_generales.scss";
+@import "./_buttons.scss";
+
+nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: #28a745;
+  color: white;
+  .home {
+    font-size: 25px;
+    text-decoration: none;
+    color: white;
+    font-weight: 800;
+    &:hover {
+      color: #ffc107;
+    }
+  }
+  .navbarLogin {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    font-weight: 500;
+    a {
+      text-decoration: underline;
+      color: white;
+      &:hover {
+        color: #ffc107;
+      }
+    }
+  }
+}
+
+article {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffc107;
+  color: #343a40;
+  .container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100vw;
+    gap: 1rem;
+    background-color: #ececec;
+    padding: 2rem;
+    color: black;
+    .card {
+      border-radius: 10px;
+      width: 20rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: white;
+      color: black;
+      padding: 1rem;
+      &:hover {
+        -webkit-box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.31);
+        -moz-box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.31);
+        box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.31);
+      }
+    }
+    form {
+      color: black;
+      background-color: white;
+      border-radius: 10px;
+      padding: 1rem;
+      width: 20rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+      margin-top: 1rem;
+      &:hover {
+        -webkit-box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.31);
+        -moz-box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.31);
+        box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.31);
+      }
+      input {
+        width: 100%;
+      }
+      a {
+        color: #696969;
+        &:hover {
+          color: #343a40;
+        }
+      }
+    }
+  }
+  .cartContainer {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    color: black;
+    background-color: white;
+    &:hover {
+      -webkit-box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.31);
+      -moz-box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.31);
+      box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.31);
+    }
+    .cartCard {
+      width: 65rem;
+      gap: 2rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: solid #343a40 0.1px;
+    }
+    .cartButton {
+      width: 10rem;
+      width: 100%;
+      text-align: right;
+      button {
+        margin-top: 0.5rem;
+      }
+    }
+  }
+  .deleteUsers {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    padding: 1rem;
+  }
+}
+
+img {
+  width: 10rem;
+  margin: 1rem;
+}
+
+footer {
+  display: flex;
+  background-color: #202122;
+  color: white;
+  justify-content: center;
+  padding: 1rem;
+}

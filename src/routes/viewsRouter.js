@@ -54,7 +54,7 @@ router.get(`/mockingproducts`, async (req, res) => {
     title: "Productos",
     products: products,
     scripts: ["index.js", "logout.js"],
-    css: ["styles.css"],
+    css: ["styles.scss"],
     endPoint: "Home",
     isAdmin,
     loggedIn,
@@ -85,7 +85,7 @@ router.get(`/`, async (req, res) => {
     title: "Productos",
     products: products.docs,
     scripts: ["index.js", "logout.js"],
-    css: ["styles.css"],
+    css: ["styles.scss"],
     endPoint: "Home",
     isAdmin,
     loggedIn,
@@ -101,7 +101,7 @@ router.get("/addProducts", isLoggedIn, productPermission, async (req, res) => {
   res.render(`addProducts`, {
     title: "Formulario",
     scripts: ["index.js", "logout.js", "productsForm.js"],
-    css: ["styles.css"],
+    css: ["styles.scss"],
     endPoint: "Agregar productos",
     isAdmin,
     loggedIn,
@@ -124,7 +124,7 @@ router.get("/carts/:cId", isLoggedIn, async (req, res) => {
     title: "Carrito",
     products: products,
     scripts: ["index.js", "cart.js", "logout.js"],
-    css: ["styles.css"],
+    css: ["styles.scss"],
     endPoint: "Cart",
     user,
     isAdmin,
@@ -139,7 +139,7 @@ router.get("/login", isNotLoggedIn, (req, res) => {
   res.render("login", {
     title: "Login",
     scripts: ["login.js"],
-    css: ["styles.css"],
+    css: ["styles.scss"],
     endPoint: "Login",
   });
 });
@@ -150,7 +150,7 @@ router.get("/register", isNotLoggedIn, (req, res) => {
   res.render("register", {
     title: "Registro",
     scripts: ["register.js"],
-    css: ["styles.css"],
+    css: ["styles.scss"],
     endPoint: "Registro",
   });
 });
@@ -161,7 +161,7 @@ router.get("/forgotPassword", isNotLoggedIn, (req, res) => {
   res.render("forgotPassword", {
     title: "Envío de email",
     scripts: ["restorePassword.js"],
-    css: ["styles.css"],
+    css: ["styles.scss"],
     endPoint: "Envío de email",
   });
 });
@@ -172,7 +172,7 @@ router.get("/restorePassword/:token", isNotLoggedIn, (req, res) => {
   const { token } = req.params;
   res.render("restorePassword", {
     title: "Restaurar contraseña",
-    css: ["styles.css"],
+    css: ["styles.scss"],
     token: token,
     endPoint: "Restaurar contraseña",
   });
@@ -185,7 +185,7 @@ router.get("/users/:uId/documents", isLoggedIn, isUser, async (req, res) => {
   res.render(`uploader`, {
     title: "Formulario",
     scripts: ["index.js", "documentForm.js", "logout.js"],
-    css: ["styles.css"],
+    css: ["styles.scss"],
     endPoint: "Agregar documentos",
     isAdmin,
     loggedIn,
@@ -204,7 +204,7 @@ router.get("/users", async (req, res) => {
   res.render("users", {
     title: "Usuarios",
     scripts: ["users.js", "logout.js"],
-    css: ["styles.css"],
+    css: ["styles.scss"],
     endPoint: "Usuarios",
     isAdmin,
     loggedIn,
@@ -225,7 +225,7 @@ router.get("/manageUsers/:uId", isLoggedIn, isAdmin, async (req, res) => {
   res.render(`manageUsers`, {
     title: "Gestión de usuarios",
     scripts: ["manageUsers.js", "logout.js"],
-    css: ["styles.css"],
+    css: ["styles.scss"],
     endPoint: "Gestionar usuarios",
     isAdmin,
     loggedIn,
@@ -242,7 +242,7 @@ router.get("/purchase", isLoggedIn, isUser, async (req, res) => {
   res.render("purchase", {
     title: "Gestión de usuarios",
     scripts: ["purchase.js", "logout.js"],
-    css: ["styles.css"],
+    css: ["styles.scss"],
     endPoint: "Gestionar usuarios",
     isAdmin,
     loggedIn,

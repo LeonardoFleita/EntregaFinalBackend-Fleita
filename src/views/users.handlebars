@@ -1,20 +1,23 @@
 <article>
-  <h2>Gestionar Usuarios</h2>
-  <div class="formContainer">
+  <h1>Gestionar Usuarios</h1>
+  <div class="container">
     {{#each users}}
-      <div class="productCard">
+      <div class="card">
         <p>Nombre: {{firstName}}</p>
         <p>Apellido: {{lastName}}</p>
         <p>Email: {{email}}</p>
         <p>Id: <span id="userId">{{id}}</span></p>
         <p>Última conexión: {{lastConnection}}</p>
         <button
+          class="myFormButton"
           style="margin-top: 1rem;"
           onclick="properties('{{id}}')"
         >Propiedades</button>
       </div>
     {{/each}}
+  </div>
+  <div class="deleteUsers">
     <h3>Eliminar usuarios sin conexión hace más de 2 días</h3>
-    <button onclick="deleteUsers()">Eliminar</button>
+    <button class="myDeleteButton" onclick="deleteUsers()">Eliminar</button>
   </div>
 </article>

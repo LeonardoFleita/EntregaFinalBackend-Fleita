@@ -24,7 +24,10 @@ function sendEmail() {
     .then((res) => res.json())
     .then((res) => {
       if (res.status === "success") {
-        window.location.href = "/";
+        Swal.fire({
+          title: "Email enviado",
+          icon: "success",
+        }).then(() => (window.location.href = "/"));
       } else {
         Swal.fire({
           title: res.error,

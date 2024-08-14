@@ -4,7 +4,6 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start:test": "powershell -Command \"& { $env:NODE_ENV='test'; node src/app.js }\"",
     "start:dev": "powershell -Command \"& { $env:NODE_ENV='development'; node src/app.js }\"",
     "start:prod": "powershell -Command \"& { $env:NODE_ENV='production'; node src/app.js }\""
@@ -30,6 +29,7 @@
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "passport-local": "^1.0.0",
+    "sass": "^1.77.8",
     "socket.io": "^4.7.4",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",

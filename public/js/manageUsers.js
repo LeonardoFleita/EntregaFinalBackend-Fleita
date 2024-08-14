@@ -17,11 +17,19 @@ switchButton.addEventListener("click", () => {
           window.location.reload();
         });
       } else {
-        Swal.fire({
-          title: "Error",
-          text: `${res.error}`,
-          icon: "error",
-        });
+        if (res.error === "missing data") {
+          Swal.fire({
+            title: "Error",
+            text: `El usuario no cargó la documentación necesaria para ser premium`,
+            icon: "error",
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: `${res.error}`,
+            icon: "error",
+          });
+        }
         throw new Error(res.error);
       }
     })

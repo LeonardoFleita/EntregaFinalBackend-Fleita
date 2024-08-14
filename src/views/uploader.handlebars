@@ -1,13 +1,11 @@
 <article>
-  <h2>Formulario</h2>
-  <div class="formContainer">
-
+  <h1>Cargar documentos</h1>
+  <div class="container">
     <form
       data-userId="{{user._id}}"
       enctype="multipart/form-data"
       id="documentsForm"
     >
-      <legend>Agregar documentos</legend>
       <label for="type">Tipo de documento:</label>
       <select id="type" name="type" onchange="toggleNameField()">
         <option value="profile">Imagen de perfil</option>
@@ -23,7 +21,7 @@
       </div>
       <label for="document">Documento</label>
       <input type="file" id="document" name="document" />
-      <button type="submit">Enviar</button>
+      <button class="myFormButton" type="submit">Enviar</button>
     </form>
 
   </div>
