@@ -4,8 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start": "node src/app.js",
     "start:test": "powershell -Command \"& { $env:NODE_ENV='test'; node src/app.js }\"",
-    "start:dev": "powershell -Command \"& { $env:NODE_ENV='development'; node src/app.js }\"",
+    "start:dev": "powershell -Command \"& { $env:NODE_ENV='development'; nodemon src/app.js }\"",
     "start:prod": "powershell -Command \"& { $env:NODE_ENV='production'; node src/app.js }\""
   },
   "keywords": [],

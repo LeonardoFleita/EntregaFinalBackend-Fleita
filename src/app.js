@@ -64,6 +64,8 @@ app.use(errorHandler);
 
 //Función de ejecución
 
+const port = process.env.PORT || 8080;
+
 const execute = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URL, {
@@ -76,7 +78,7 @@ const execute = async () => {
     app.set("admin", admin);
     app.set("superAdmin", superAdmin);
 
-    app.listen(8080, () => {
+    app.listen(port, () => {
       console.log("Servidor listo");
     });
   } catch (err) {

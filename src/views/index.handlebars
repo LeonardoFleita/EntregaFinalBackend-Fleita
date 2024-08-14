@@ -11,17 +11,18 @@
         <p>Código: {{code}}</p>
         <p>Stock: {{stock}}</p>
         <p>Id: {{id}}</p>
-        <button
-          class="myButton"
-          style="margin-top: 1rem;"
-          onclick="addToCart('{{id}}', '{{@root.user.cart}}')"
-        >Agregar al carrito</button>
         {{#if @root.isAdmin}}
           <button
             class="myDeleteButton"
             style="margin-top: 0.5rem;"
             onclick="deleteProduct('{{id}}')"
           >Eliminar producto</button>
+        {{else}}
+          <button
+            class="myButton"
+            style="margin-top: 1rem;"
+            onclick="addToCart('{{id}}', '{{@root.user.cart}}')"
+          >Agregar al carrito</button>
         {{/if}}
       </div>
     {{/each}}
