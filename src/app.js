@@ -87,3 +87,5 @@ const execute = async () => {
 };
 
 execute();
+
+module.exports = app;
